@@ -1,4 +1,5 @@
 package amonglegendminecraft.amonglegendminecraft;
+
 import amonglegendminecraft.amonglegendminecraft.commands.StartCommand;
 import amonglegendminecraft.amonglegendminecraft.listeners.PlayerJoin;
 import org.bukkit.plugin.PluginManager;

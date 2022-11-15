@@ -1,6 +1,7 @@
 package amonglegendminecraft.amonglegendminecraft.commands;
 
 import amonglegendminecraft.amonglegendminecraft.handlers.Team;
+import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,9 +18,13 @@ public class StartCommand implements CommandExecutor {
 
         if (command.getName().equalsIgnoreCase("start")){
 
+            /*---------------------------------------Declaration--------------------------------------------*/
             //Team Creation
             Team impostors = new Team("Impostors");
             Team crewmates = new Team("Crewmates");
+            LocationUtilities locationUtilities = new LocationUtilities();
+
+            /*----------------------------------------------------------------------------------------------*/
 
             //Getting all the Online players and putting em in an array
             ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
@@ -33,6 +38,8 @@ public class StartCommand implements CommandExecutor {
                     crewmates.addPlayer(player);
                 }
             }
+            //Randomly teleport all connected players in a square perimeter of 2000block
+            locationUtilities.teleportAllToRandomLocation(playersArray, -1000,1000);
 
             //Display teamnanme on the screen of all the players
             crewmates.displayTeam(false,args[0]);
@@ -42,15 +49,6 @@ public class StartCommand implements CommandExecutor {
             crewmates.emptyTeam();
             impostors.emptyTeam();
         }
-        /*Random rand = new Random();
-
-        for(Player player : Bukkit.getOnlinePlayers()){
-            int x = -1000 + (int)(rand.nextDouble() * (1000 - -1000 + 1));
-            int height = 0;
-            int z = -1000 + (int)(rand.nextDouble() * (1000 - -1000 + 1));
-            Location loc = new Location(player.getWorld(), x, height, z);
-            player.teleportAsync(loc.toHighestLocation());
-        }*/
         return true;
     }
 }
