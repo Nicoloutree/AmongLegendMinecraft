@@ -22,7 +22,7 @@ public class StartCommand implements CommandExecutor {
             Team crewmates = new Team("Crewmates");
             Collection<? extends Player> participants = Bukkit.getOnlinePlayers();
             ArrayList<Player> playersArray = new ArrayList<Player>(participants);
-            impostors.pickImpostor(playersArray,1);
+            impostors.pickImpostor(playersArray, Integer.parseInt(args[0]));
             for(Player player : playersArray){
                 if(!impostors.isFromTeam(player)){
                     crewmates.addPlayer(player);
