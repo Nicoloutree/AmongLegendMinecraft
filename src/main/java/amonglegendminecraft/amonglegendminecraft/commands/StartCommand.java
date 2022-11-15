@@ -18,18 +18,29 @@ public class StartCommand implements CommandExecutor {
         if (!(sender instanceof Player)) { return true; }
 
         if (command.getName().equalsIgnoreCase("start")){
+
+            //Team Creation
             Team impostors = new Team("Impostors");
             Team crewmates = new Team("Crewmates");
-            Collection<? extends Player> participants = Bukkit.getOnlinePlayers();
-            ArrayList<Player> playersArray = new ArrayList<Player>(participants);
+
+            //Getting all the Online players and putting em in an array
+            ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+
+            //Randomly picking impostor among the online player according to the args of the command
             impostors.pickImpostor(playersArray, Integer.parseInt(args[0]));
+
+            //Addding every other player to the crewmate
             for(Player player : playersArray){
                 if(!impostors.isFromTeam(player)){
                     crewmates.addPlayer(player);
                 }
             }
-            crewmates.displayTeam(false);
-            impostors.displayTeam(true);
+
+            //Display teamnanme on the screen of all the players
+            crewmates.displayTeam(false,args[0]);
+            impostors.displayTeam(true, args[0]);
+
+            //Empty the team to restart the game (this will be moved in the event that stops the game when de ender dragon is killed
             crewmates.emptyTeam();
             impostors.emptyTeam();
         }

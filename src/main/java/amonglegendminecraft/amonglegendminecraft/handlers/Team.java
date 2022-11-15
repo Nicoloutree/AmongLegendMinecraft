@@ -36,6 +36,7 @@ public class Team {
         this.teamName = teamName;
     }
 
+    //Return true if the input player is in the team object preciding it
     public boolean isFromTeam(Player player){
         if (this.playerArrayList.contains(player))
             return true;
@@ -49,7 +50,8 @@ public class Team {
     public void removePlayer(Player player){
         this.playerArrayList.remove(player);
     }
-
+    //Takes and arrayList as input, shuffle it and then place an nbImpo impostor in the impostor team
+    //this way we randomize the impostor everytime we start a game
     public void pickImpostor(ArrayList<Player> playerArrayList, int nbImpo){
         Collections.shuffle(playerArrayList);
         for (int i = 0 ; i <= nbImpo-1; i++){
@@ -60,15 +62,15 @@ public class Team {
     public void emptyTeam(){
         this.playerArrayList.clear();
     }
-
-    public void displayTeam(boolean b){
+    //display the team name on the screen of the player
+    public void displayTeam(boolean b, String nbImpo){
         if(b){
             for(Player player : this.playerArrayList){
                 player.sendTitle(RED + this.teamName,RED + playerArrayListToString());
             }
         }else{
             for(Player player : this.playerArrayList){
-                player.sendTitle(BLUE + this.teamName,"");
+                player.sendTitle(BLUE + this.teamName,BLUE + "There are "+ nbImpo +" among us");
             }
         }
     }
