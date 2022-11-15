@@ -6,10 +6,8 @@ import org.bukkit.entity.Player;
 
 
 public class LocationUtilities {
-
-    private Location randomLocation;
-    private Location spawnLocation = new Location(
-            Bukkit.getWorld("Lobby"),0, 64,0);
+    private final Location spawnLocation = new Location(
+            Bukkit.getWorld("world"),0, 0,0).toHighestLocation();
 
     public void teleportToSpawn (Player player) {
         player.teleport(spawnLocation);
