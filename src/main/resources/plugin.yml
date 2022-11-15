@@ -1,0 +1,12 @@
+name: AmongLegendMinecraft
+version: 0.0.1
+main: amonglegendminecraft.amonglegendminecraft.AmongLegendMinecraft
+description: Minecraft Sussy Plugin
+load: STARTUP
+api-version: 1.19
+Author: Moi
+commands:
+  start:
+    description: "start the game"
+    usage: /<command>
+    aliases: [startGame,s]
