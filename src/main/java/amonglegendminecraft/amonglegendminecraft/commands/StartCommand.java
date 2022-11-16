@@ -1,17 +1,19 @@
 package amonglegendminecraft.amonglegendminecraft.commands;
 
+import amonglegendminecraft.amonglegendminecraft.handlers.*;
 import amonglegendminecraft.amonglegendminecraft.handlers.Team;
+import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.*;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class StartCommand implements CommandExecutor {
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player)) { return true; }
@@ -19,10 +21,16 @@ public class StartCommand implements CommandExecutor {
         if (command.getName().equalsIgnoreCase("start")){
 
             /*---------------------------------------Declaration--------------------------------------------*/
-            //Team Creation
-            Team impostors = new Team("Impostors");
-            Team crewmates = new Team("Crewmates");
+
             LocationUtilities locationUtilities = new LocationUtilities();
+            ChatUtilities chatUtilities =  new ChatUtilities();
+            ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
+            CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
+            final ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+            final Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
+            final Objective objective = scoreboard.registerNewObjective("General", "dummy");
+            QuestList questList = new QuestList();
+            Timer timer = new Timer();
 
             /*----------------------------------------------------------------------------------------------*/
 
@@ -42,12 +50,29 @@ public class StartCommand implements CommandExecutor {
             locationUtilities.teleportAllToRandomLocation(playersArray, -1000,1000);
 
             //Display teamnanme on the screen of all the players
-            crewmates.displayTeam(false,args[0]);
-            impostors.displayTeam(true, args[0]);
+            crewmates.displayTeam(args[0]);
+            impostors.displayTeam(args[0]);
 
             //Empty the team to restart the game (this will be moved in the event that stops the game when de ender dragon is killed
             crewmates.emptyTeam();
             impostors.emptyTeam();
+
+            objective.setDisplayName("Time");
+            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+            Score time = objective.getScore("0:00:01");
+            Score test = objective.getScore("test");
+
+            time.setScore(0);
+            timer.displayTimer(playersArray,scoreboard);
+            //timer.timerIncrement(time);
+
+            for(Player p : playersArray){
+                QuestList questList = new QuestList(p);
+                questList.
+            }
+
+            chatUtilities.broadcast("everything executed");
         }
         return true;
     }
