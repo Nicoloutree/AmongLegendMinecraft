@@ -38,8 +38,8 @@ public class StartCommand implements CommandExecutor {
                     crewmates.addPlayer(player);
                 }
             }
-            //Randomly teleport all connected players in a square perimeter of 2000block
-            locationUtilities.teleportAllToRandomLocation(playersArray, -1000,1000);
+            //Randomly teleport all connected in duos (if possible) players in a square perimeter of 2000block
+            locationUtilities.teleportAllDuoToRandomLocation(playersArray, -1000,1000);
 
             //Display teamnanme on the screen of all the players
             crewmates.displayTeam(false,args[0]);
