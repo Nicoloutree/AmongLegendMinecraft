@@ -10,10 +10,10 @@ import java.util.Collections;
 import static org.bukkit.ChatColor.BLUE;
 
 public class CrewmateTeam extends Team{
-    private QuestList questList;
-    public CrewmateTeam(String teamName, ArrayList<Player> playerArrayList, QuestList questList) {
+
+    public CrewmateTeam(String teamName, ArrayList<Player> playerArrayList) {
         super(teamName, playerArrayList);
-        this.questList = questList;
+
     }
 
     //display the team name on the screen of the player
@@ -23,19 +23,5 @@ public class CrewmateTeam extends Team{
         }
     }
 
-    public void initialiseQuestsPerPlayers(QuestList questList, int nbQuest){
-        createScoreboard scoreboard = new createScoreboard();
-        int k = 0;
 
-        for (Player player : this.getPlayerArrayList()){
-            Collections.shuffle(questList.getQuestArrayListPerPlayer()); //On mélange l'arraylist
-            scoreboard.createBoardForPlayer(player, String.valueOf(k));
-            k++;
-            for (int i = 0; i < nbQuest; i++){
-                scoreboard.addObjective(player, questList.getQuestArrayListPerPlayer().get(i));
-
-            }
-            player.setScoreboard(scoreboard.getScoreboard());
-        }
-    }
 }

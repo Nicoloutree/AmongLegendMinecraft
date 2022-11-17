@@ -4,88 +4,47 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class createScoreboard {
 
     private Scoreboard scoreboard;
-    private ScoreboardManager scoreboardManager;
     private Objective objective;
-    private Score scorename;
-    private Score scorename2;
-    private Player player;
-    private Quest quest;
 
-
-    public createScoreboard(Scoreboard scoreboard, ScoreboardManager scoreboardManager, Objective objective, Score questName, Score questName2, Player player, Quest quest) {
-        this.scoreboard = scoreboard;
-        this.scoreboardManager = scoreboardManager;
-        this.objective = objective;
-        this.scorename = questName;
-        this.scorename2 = questName2;
-        this.player = player;
-        this.quest = quest;
-    }
     public createScoreboard(){
 
     }
 
-    public void createBoardForPlayer(Player player, String y){
-
-        scoreboardManager = Bukkit.getScoreboardManager();
+    public void createBoard(){
+        ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         scoreboard = scoreboardManager.getNewScoreboard();
-        objective = scoreboard.registerNewObjective(y,"dummy");
+        objective = scoreboard.registerNewObjective("Quest","dummy");
         objective.setDisplayName("Quête");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-        this.player = player;
     }
 
-    public void addObjective(Player player, Quest quest){
+    public void addObjective(int nbQuestToAdd, Quest quest){
+        //Ce que j'appelle "score" c'est le truc qui est display à droite de l'écran
+        //Genre y'aura écrit par exemple "Bois" ou "Cobblestone" c'est le nom de la quête
 
-
-        scorename = objective.getScore(quest.getQuestName());
-        scorename.setScore(0);
-
-        this.player = player;
+        Score scorename;
+        for (int i = 0; i < nbQuestToAdd; i++){
+            scorename = objective.getScore(quest.getQuestName());   //On ajoute la quête au score
+            scorename.setScore(0);                                  //On set le score à 0 (étape obligatoire sinon elle s'affiche pas, merci bukkit)
+        }
     }
 
-    public void addObjective2(Player player, Quest quest){
+    public void createBoardForPlayers(ArrayList<Player> players, QuestList questList, int nbQuest){
 
-
-        scorename2 = objective.getScore(quest.getQuestName());
-        scorename2.setScore(0);
-
-        this.player = player;
+        for (Player player : players) {                                     //Parcours de tout les joueurs
+            Collections.shuffle(questList.getQuestsForAllPlayers());        //On shuffle la liste de quête à chaque fois
+            createBoard();                                                  //On créer le board (1 seul par joueur)
+            for (int k = 0; k < nbQuest; k++) {                             //Parcours du nombre de quest à attribuer par joueur
+                addObjective(nbQuest, questList.getQuestsForAllPlayers().get(k)); //On ajoute chaque quête pour chaque joueur
+            }
+            player.setScoreboard(scoreboard);                               //On attribue le bon board au joueur
+        }
     }
 
-    public Scoreboard getScoreboard() {
-        return scoreboard;
-    }
-
-    public void setScoreboard(Scoreboard scoreboard) {
-        this.scoreboard = scoreboard;
-    }
-
-    public ScoreboardManager getScoreboardManager() {
-        return scoreboardManager;
-    }
-
-    public void setScoreboardManager(ScoreboardManager scoreboardManager) {
-        this.scoreboardManager = scoreboardManager;
-    }
-
-    public Objective getObjective() {
-        return objective;
-    }
-
-    public void setObjective(Objective objective) {
-        this.objective = objective;
-    }
-
-    public Score getQuestName() {
-        return scorename;
-    }
-
-    public void setQuestName(Score questName) {
-        this.scorename = questName;
-    }
 }

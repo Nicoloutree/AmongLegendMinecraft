@@ -2,10 +2,12 @@ package amonglegendminecraft.amonglegendminecraft.handlers;
 
 import org.bukkit.entity.Player;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public abstract class Team {
 
     private String teamName;
+    private QuestList quests;
 
     private ArrayList<Player> playerArrayList;
     public Team(String teamName,ArrayList<Player> playerArrayList) {
@@ -19,6 +21,14 @@ public abstract class Team {
 
     public void setPlayerArrayList(ArrayList<Player> playerArrayList) {
         this.playerArrayList = playerArrayList;
+    }
+
+    public QuestList getQuests() {
+        return quests;
+    }
+
+    public void setQuests(QuestList quests) {
+        this.quests = quests;
     }
 
     public String getTeamName() {
@@ -53,4 +63,10 @@ public abstract class Team {
         }
         return res;
     }
+
+    public void initialiseQuestsPerPlayers(int nbQuest){
+        createScoreboard scoreboard = new createScoreboard();
+        scoreboard.createBoardForPlayers(getPlayerArrayList(),quests, nbQuest);
+    }
+
 }

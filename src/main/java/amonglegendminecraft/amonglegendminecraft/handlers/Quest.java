@@ -16,6 +16,13 @@ public class Quest {
 
     private Player player;
 
+    public Quest(String questName, String questDescription, boolean done) {
+        this.questName = questName;
+        this.questDescription = questDescription;
+        this.done = done;
+    }
+
+
     public void setQuestName(String questName) {
         this.questName = questName;
     }
@@ -50,11 +57,6 @@ public class Quest {
         return player;
     }
 
-    public Quest(String questName, String questDescription, boolean done) {
-        this.questName = questName;
-        this.questDescription = questDescription;
-        this.done = done;
-    }
 
     public Quest(){
 

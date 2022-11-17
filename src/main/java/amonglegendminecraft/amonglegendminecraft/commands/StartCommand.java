@@ -26,35 +26,39 @@ public class StartCommand implements CommandExecutor {
             ChatUtilities chatUtilities =  new ChatUtilities();
             QuestList quest = new QuestList();
             quest.createQuest();
-            //ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
-            CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>(), quest);
+            ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
+            CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
 
+            crewmates.setQuests(quest);
+            impostors.setQuests(quest);
             /*----------------------------------------------------------------------------------------------*/
 
             //Getting all the Online players and putting em in an array
             ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
 
             //Randomly picking impostor among the online player according to the args of the command
-            //impostors.pickImpostor(playersArray, Integer.parseInt(args[0]));
+            impostors.pickImpostor(playersArray, Integer.parseInt(args[0]));
 
             //Addding every other player to the crewmate
             for(Player player : playersArray){
-                //if(!impostors.isFromTeam(player)){
+                if(!impostors.isFromTeam(player)){
                     crewmates.addPlayer(player);
-                //}
+                }
             }
             //Randomly teleport all connected in duos (if possible) players in a square perimeter of 2000block
             locationUtilities.teleportAllDuoToRandomLocation(playersArray, -1000,1000);
 
             //Display teamnanme on the screen of all the players
             crewmates.displayTeam(args[0]);
-            //impostors.displayTeam(args[0]);
+            impostors.displayTeam(args[0]);
 
-            crewmates.initialiseQuestsPerPlayers(quest,3);
+            impostors.initialiseQuestsPerPlayers(3);
+            crewmates.initialiseQuestsPerPlayers(3);
+
 
             //Empty the team to restart the game (this will be moved in the event that stops the game when de ender dragon is killed
             crewmates.emptyTeam();
-            //impostors.emptyTeam();
+            impostors.emptyTeam();
 
 
             chatUtilities.broadcast("everything executed");
