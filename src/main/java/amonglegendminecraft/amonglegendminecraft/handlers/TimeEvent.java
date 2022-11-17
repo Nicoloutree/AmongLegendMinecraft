@@ -17,13 +17,11 @@ public class TimeEvent {
     private ArrayList<Player> playerArrayList;
     private ArrayList<Player> crewmateArrayList;
     private ArrayList<Player> impostorArrayList;
-    private int timeInt;
 
     public TimeEvent(ArrayList<Player> playerArrayList, ArrayList<Player> crewmateArrayList, ArrayList<Player> impostorArrayList) {
         this.playerArrayList = playerArrayList;
         this.crewmateArrayList = crewmateArrayList;
         this.impostorArrayList = impostorArrayList;
-        this.timeInt = 0;
     }
 
     public void timerIncrement(Score time) {
@@ -32,13 +30,13 @@ public class TimeEvent {
             @Override
             public void run() {
                 time.setScore(time.getScore() + 1);
-                timeInt = time.getScore();
+                detectEvent(time.getScore());
 
 
             }
         }, 0L, 20L);
     }
-    public void detectEvent(){
+    public void detectEvent(int timeInt){
         switch(timeInt){
             case 10:
                 giveSword(this.impostorArrayList);

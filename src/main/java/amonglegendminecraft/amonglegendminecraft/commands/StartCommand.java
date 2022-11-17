@@ -51,7 +51,9 @@ public class StartCommand implements CommandExecutor {
             //impostors.displayTeam(args[0]);
 
             crewmates.initialiseQuestsPerPlayers(quest,3);
-            // Creation of a timer
+            // Creation of a timerEvent
+            //TimeEvent timeEvent=new TimeEvent(playersArray,crewmates.getPlayerArrayList(),impostor.getPlayerArrayList());
+            //timeEvent.timerIncrement(Score time);
 
             //Empty the team to restart the game (this will be moved in the event that stops the game when de ender dragon is killed
             crewmates.emptyTeam();
