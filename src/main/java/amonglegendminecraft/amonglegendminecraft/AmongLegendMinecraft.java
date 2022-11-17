@@ -14,6 +14,7 @@ public final class AmongLegendMinecraft extends JavaPlugin {
         plugin = this;
         registerListerners();
         getCommand("start").setExecutor(new StartCommand());
+
     }
 
     public void registerListerners(){

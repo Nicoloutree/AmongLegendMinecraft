@@ -17,6 +17,7 @@ public class Timer {
             @Override
             public void run() {
                 time.setScore(time.getScore() + 1);
+
             }
         }, 0L, 20L);
     }
@@ -38,5 +39,6 @@ public class Timer {
 
         objective.getScore(heures + ":" + minutes + ":" + second);
     }
+
 
 }
