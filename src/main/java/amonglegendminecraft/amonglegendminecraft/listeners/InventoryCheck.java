@@ -1,5 +1,6 @@
 package amonglegendminecraft.amonglegendminecraft.listeners;
 
+import amonglegendminecraft.amonglegendminecraft.handlers.Quest;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;

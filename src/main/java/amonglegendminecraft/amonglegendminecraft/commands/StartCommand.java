@@ -24,13 +24,10 @@ public class StartCommand implements CommandExecutor {
 
             LocationUtilities locationUtilities = new LocationUtilities();
             ChatUtilities chatUtilities =  new ChatUtilities();
-            ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
-            CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
-            final ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
-            final Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
-            final Objective objective = scoreboard.registerNewObjective("General", "dummy");
-            QuestList questList = new QuestList();
-            Timer timer = new Timer();
+            QuestList quest = new QuestList();
+            quest.createQuest();
+            //ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
+            CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>(), quest);
 
             /*----------------------------------------------------------------------------------------------*/
 
@@ -38,39 +35,27 @@ public class StartCommand implements CommandExecutor {
             ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
 
             //Randomly picking impostor among the online player according to the args of the command
-            impostors.pickImpostor(playersArray, Integer.parseInt(args[0]));
+            //impostors.pickImpostor(playersArray, Integer.parseInt(args[0]));
 
             //Addding every other player to the crewmate
             for(Player player : playersArray){
-                if(!impostors.isFromTeam(player)){
+                //if(!impostors.isFromTeam(player)){
                     crewmates.addPlayer(player);
-                }
+                //}
             }
-            //Randomly teleport all connected players in a square perimeter of 2000block
-            locationUtilities.teleportAllToRandomLocation(playersArray, -1000,1000);
+            //Randomly teleport all connected in duos (if possible) players in a square perimeter of 2000block
+            locationUtilities.teleportAllDuoToRandomLocation(playersArray, -1000,1000);
 
             //Display teamnanme on the screen of all the players
             crewmates.displayTeam(args[0]);
-            impostors.displayTeam(args[0]);
+            //impostors.displayTeam(args[0]);
+
+            crewmates.initialiseQuestsPerPlayers(quest,3);
 
             //Empty the team to restart the game (this will be moved in the event that stops the game when de ender dragon is killed
             crewmates.emptyTeam();
-            impostors.emptyTeam();
+            //impostors.emptyTeam();
 
-            objective.setDisplayName("Time");
-            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-            Score time = objective.getScore("0:00:01");
-            Score test = objective.getScore("test");
-
-            time.setScore(0);
-            timer.displayTimer(playersArray,scoreboard);
-            //timer.timerIncrement(time);
-
-            for(Player p : playersArray){
-                QuestList questList = new QuestList(p);
-                questList.
-            }
 
             chatUtilities.broadcast("everything executed");
         }
