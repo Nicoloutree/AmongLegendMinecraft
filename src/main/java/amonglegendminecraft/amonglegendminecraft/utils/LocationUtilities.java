@@ -2,6 +2,7 @@ package amonglegendminecraft.amonglegendminecraft.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -13,11 +14,11 @@ public class LocationUtilities {
     private final Location spawnLocation = new Location(
             Bukkit.getWorld("world"),0, 0,0).toHighestLocation();
 
-    public void teleportToSpawn (Player player) {
+    public void teleportToSpawn(Player player) {
         player.teleport(spawnLocation);
     }
 
-    public void teleportAllToSpawn(){
+    public void teleportAllToSpawn() {
         for (Player p : Bukkit.getOnlinePlayers())
             teleportToSpawn(p);
     }
@@ -49,8 +50,9 @@ public class LocationUtilities {
             else teleportToRandomLocation(playerArrayList.get(i),min,max);
         }
     }
+
     private int randomNum(Integer lownum, Integer highnum) {
         Random rand = new Random();
-        return lownum + (int)(rand.nextDouble() * ((highnum - lownum) + 1));
+        return lownum + (int) (rand.nextDouble() * ((highnum - lownum) + 1));
     }
 }

@@ -1,8 +1,12 @@
 package amonglegendminecraft.amonglegendminecraft.handlers;
 
+import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static java.awt.Color.RED;
+import static org.bukkit.ChatColor.BLUE;
 
 public abstract class Team {
 
@@ -67,6 +71,19 @@ public abstract class Team {
     public void initialiseQuestsPerPlayers(int nbQuest){
         createScoreboard scoreboard = new createScoreboard();
         scoreboard.createBoardForPlayers(getPlayerArrayList(),quests, nbQuest);
+    }
+
+    public void sendTitleToAllPlayers(ArrayList<Player> playerArrayList, String title, String message){
+        ChatUtilities chatUtilities = new ChatUtilities();
+        for(Player player : playerArrayList){
+            if (getTeamName().equals("Crewmates")){
+                chatUtilities.broadcast("On est dans le if");
+                player.sendTitle(BLUE + title, message);
+            }else{
+                chatUtilities.broadcast("On est dans le else");
+                player.sendTitle(RED + title, message);
+            }
+        }
     }
 
 }

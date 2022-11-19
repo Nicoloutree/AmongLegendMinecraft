@@ -1,6 +1,7 @@
 package amonglegendminecraft.amonglegendminecraft;
 
 import amonglegendminecraft.amonglegendminecraft.commands.StartCommand;
+import amonglegendminecraft.amonglegendminecraft.listeners.CommonListeners;
 import amonglegendminecraft.amonglegendminecraft.listeners.InventoryCheck;
 import amonglegendminecraft.amonglegendminecraft.listeners.PlayerJoin;
 import org.bukkit.plugin.PluginManager;
@@ -14,11 +15,13 @@ public final class AmongLegendMinecraft extends JavaPlugin {
         plugin = this;
         registerListerners();
         getCommand("start").setExecutor(new StartCommand());
+
     }
 
     public void registerListerners(){
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerJoin(), this);
         pm.registerEvents(new InventoryCheck(), this);
+        pm.registerEvents(new CommonListeners(), this);
     }
 }
