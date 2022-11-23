@@ -10,11 +10,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class AmongLegendMinecraft extends JavaPlugin {
 
     public static AmongLegendMinecraft plugin;
+    public StartCommand startCommand = new StartCommand();
+
     @Override
     public void onEnable() {
         plugin = this;
         registerListerners();
-        getCommand("start").setExecutor(new StartCommand());
+        getCommand("start").setExecutor(startCommand);
 
     }
 
@@ -22,6 +24,6 @@ public final class AmongLegendMinecraft extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerJoin(), this);
         pm.registerEvents(new InventoryCheck(), this);
-        pm.registerEvents(new CommonListeners(), this);
+        pm.registerEvents(startCommand.getCommonListeners(), this);
     }
 }

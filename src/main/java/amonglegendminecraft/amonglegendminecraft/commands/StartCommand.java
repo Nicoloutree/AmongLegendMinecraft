@@ -2,6 +2,7 @@ package amonglegendminecraft.amonglegendminecraft.commands;
 
 import amonglegendminecraft.amonglegendminecraft.handlers.*;
 import amonglegendminecraft.amonglegendminecraft.handlers.Team;
+import amonglegendminecraft.amonglegendminecraft.listeners.CommonListeners;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
 import org.bukkit.Bukkit;
@@ -14,6 +15,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class StartCommand implements CommandExecutor {
+
+    private CommonListeners commonListeners = new CommonListeners();
+    private ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
+    private CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
+
+    public CommonListeners getCommonListeners() {
+        return commonListeners;
+    }
+
+    public ImpostorTeam getImpostors() {
+        return impostors;
+    }
+
+    public CrewmateTeam getCrewmates() {
+        return crewmates;
+    }
+
+
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player)) { return true; }
@@ -26,8 +46,8 @@ public class StartCommand implements CommandExecutor {
             ChatUtilities chatUtilities =  new ChatUtilities();
             QuestList quest = new QuestList();
             quest.createQuest();
-            ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
-            CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
+            impostors = new ImpostorTeam("Impostors", new ArrayList<>());
+            crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
 
             crewmates.setQuests(quest);
             impostors.setQuests(quest);
@@ -45,6 +65,7 @@ public class StartCommand implements CommandExecutor {
                     crewmates.addPlayer(player);
                 }
             }
+
             //Randomly teleport all connected in duos (if possible) players in a square perimeter of 2000block
             locationUtilities.teleportAllDuoToRandomLocation(playersArray, -1000,1000);
 
@@ -55,10 +76,8 @@ public class StartCommand implements CommandExecutor {
             impostors.initialiseQuestsPerPlayers(3);
             crewmates.initialiseQuestsPerPlayers(3);
 
-
-            //Empty the team to restart the game (this will be moved in the event that stops the game when de ender dragon is killed
-            crewmates.emptyTeam();
-            impostors.emptyTeam();
+            commonListeners.setCrewmates(crewmates);
+            commonListeners.setImpostors(impostors);
 
 
             chatUtilities.broadcast("everything executed");

@@ -4,6 +4,7 @@ import amonglegendminecraft.amonglegendminecraft.commands.StartCommand;
 import amonglegendminecraft.amonglegendminecraft.handlers.CrewmateTeam;
 import amonglegendminecraft.amonglegendminecraft.handlers.ImpostorTeam;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,14 +13,14 @@ import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 
-import static java.awt.Color.RED;
+import static org.bukkit.ChatColor.RED;
 import static org.bukkit.ChatColor.BLUE;
 
 public class CommonListeners implements Listener {
 
     private ImpostorTeam impostors;
     private CrewmateTeam crewmates;
-    private static CommonListeners instance = new CommonListeners();
+
 
     public ImpostorTeam getImpostors() {
         return impostors;
@@ -37,58 +38,39 @@ public class CommonListeners implements Listener {
         this.crewmates = crewmates;
     }
 
-    public static void setInstance(CommonListeners instance) {
-        CommonListeners.instance = instance;
-    }
-    public static CommonListeners getInstance() {
-        return instance;
-    }
-
-
     public CommonListeners(){
 
     }
 
-
-
-
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event){
-        ChatUtilities chatUtilities = new ChatUtilities();
 
-
-
-        chatUtilities.broadcast(impostors.getTeamName());
-        chatUtilities.broadcast(String.valueOf(impostors.getPlayerArrayList().size()));
         final Player p = event.getPlayer();
-        if (impostors.isFromTeam(p)){
-            impostors.removePlayer(p);
-            chatUtilities.broadcast("Le joueur était impostor");
-        }else if (crewmates.isFromTeam(p)){
-            crewmates.removePlayer(p);
-            chatUtilities.broadcast("Le joueur était crewmate");
 
+        if (impostors.isFromTeam(p)){           //Si le joueur est impostor
+            impostors.removePlayer(p);          //On retire le joueur de la team impostor
+        }else if (crewmates.isFromTeam(p)){     //Sinon
+            crewmates.removePlayer(p);          //On retire le joueur de la team crewmate
         }
 
-        if (impostors.getPlayerArrayList().isEmpty()){
-            for(Player player : impostors.getPlayerArrayList()){
-                    player.sendTitle(RED + "Vous avez perdu", "Il reste " + crewmates.getPlayerArrayList().size() + "crewmates");
+        if (impostors.getPlayerArrayList().isEmpty()){                                          //S'il n'y a plus d'impostor (les crewmates ont win)
+            ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
+            for(Player player : playersArray){                                                  //On parcours tout les joueurs en ligne
+                //On affiche à tout les joueurs que les crewmates ont win
+                player.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + crewmates.getPlayerArrayList().size()+ "crewmates");
             }
-            for(Player player : crewmates.getPlayerArrayList()){
-                player.sendTitle(RED + "Vous avez gagné", "Il n'y a plus d'impostors");
-            }
+
+            //On vide l'arraylist des crewmates
             crewmates.emptyTeam();
 
-            chatUtilities.broadcast("oof");
-        }else if (crewmates.getPlayerArrayList().isEmpty()){
-            for(Player player : crewmates.getPlayerArrayList()){
-                player.sendTitle(RED + "Vous avez perdu", "Il reste " + impostors.getPlayerArrayList().size() + "impostors");
+        }else if (crewmates.getPlayerArrayList().isEmpty()){                                    //S'il n'y a plus de crewmates (les impostors ont win)
+            ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
+            for(Player player : playersArray){                                                  //On parcours tout les joueurs en ligne
+                //On affiche à tout les joueurs que les impostors ont win
+                player.sendTitle(RED + "Les impostors ont gagné !", "Il reste " + impostors.getPlayerArrayList().size()+ "impostors");
             }
-            for(Player player : impostors.getPlayerArrayList()){
-                player.sendTitle(RED + "Vous avez gagné", "Il n'y a plus de crewmate");
-            }
+            //On vide l'arraylist des impostors
             impostors.emptyTeam();
-            chatUtilities.broadcast("croow");
         }
 
     }
