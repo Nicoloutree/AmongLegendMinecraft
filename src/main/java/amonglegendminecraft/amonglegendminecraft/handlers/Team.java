@@ -11,7 +11,7 @@ import static org.bukkit.ChatColor.BLUE;
 public abstract class Team {
 
     private String teamName;
-    private QuestList quests;
+    private ArrayList<QuestList> quests;
 
     private ArrayList<Player> playerArrayList;
     public Team(String teamName,ArrayList<Player> playerArrayList) {
@@ -27,11 +27,11 @@ public abstract class Team {
         this.playerArrayList = playerArrayList;
     }
 
-    public QuestList getQuests() {
+    public ArrayList<QuestList> getQuests() {
         return quests;
     }
 
-    public void setQuests(QuestList quests) {
+    public void setQuests(ArrayList<QuestList> quests) {
         this.quests = quests;
     }
 
@@ -70,7 +70,7 @@ public abstract class Team {
 
     public void initialiseQuestsPerPlayers(int nbQuest){
         createScoreboard scoreboard = new createScoreboard();
-        scoreboard.createBoardForPlayers(getPlayerArrayList(),quests, nbQuest);
+        scoreboard.createBoardForPlayers(quests, nbQuest);
     }
 
     public void sendTitleToAllPlayers(ArrayList<Player> playerArrayList, String title, String message){

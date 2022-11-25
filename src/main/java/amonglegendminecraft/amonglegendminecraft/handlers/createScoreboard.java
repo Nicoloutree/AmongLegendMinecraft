@@ -1,5 +1,6 @@
 package amonglegendminecraft.amonglegendminecraft.handlers;
 
+import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
@@ -35,15 +36,19 @@ public class createScoreboard {
         }
     }
 
-    public void createBoardForPlayers(ArrayList<Player> players, QuestList questList, int nbQuest){
+    public void createBoardForPlayers(ArrayList<QuestList> questList, int nbQuest){
 
-        for (Player player : players) {                                     //Parcours de tout les joueurs
-            Collections.shuffle(questList.getQuestsForAllPlayers());        //On shuffle la liste de quête à chaque fois
+        ChatUtilities chatUtilities = new ChatUtilities();
+        for (int i = 0; i < questList.size(); i++) {//Parcours de tout les joueurs
+            chatUtilities.broadcast(questList.get(i).getPlayer().getName());
+            chatUtilities.broadcast(String.valueOf(questList.size()));
+            Collections.shuffle(questList.get(i).getQuestsForPlayer());        //On shuffle la liste de quête à chaque fois
             createBoard();                                                  //On créer le board (1 seul par joueur)
             for (int k = 0; k < nbQuest; k++) {                             //Parcours du nombre de quest à attribuer par joueur
-                addObjective(nbQuest, questList.getQuestsForAllPlayers().get(k)); //On ajoute chaque quête pour chaque joueur
+                addObjective(nbQuest, questList.get(i).getQuestsForPlayer().get(k)); //On ajoute chaque quête pour chaque joueur
             }
-            player.setScoreboard(scoreboard);                               //On attribue le bon board au joueur
+            questList.get(i).getPlayer().setScoreboard(scoreboard);  //On attribue le bon board au joueur
+
         }
     }
 

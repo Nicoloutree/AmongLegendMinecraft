@@ -19,6 +19,9 @@ public class StartCommand implements CommandExecutor {
     private CommonListeners commonListeners = new CommonListeners();
     private ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
     private CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
+    private ArrayList<QuestList> questsCrewmates = new ArrayList<QuestList>();
+    private ArrayList<QuestList> questsImpostors = new ArrayList<QuestList>();
+
 
     public CommonListeners getCommonListeners() {
         return commonListeners;
@@ -44,17 +47,17 @@ public class StartCommand implements CommandExecutor {
 
             LocationUtilities locationUtilities = new LocationUtilities();
             ChatUtilities chatUtilities =  new ChatUtilities();
-            QuestList quest = new QuestList();
-            quest.createQuest();
+
+
             impostors = new ImpostorTeam("Impostors", new ArrayList<>());
             crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
 
-            crewmates.setQuests(quest);
-            impostors.setQuests(quest);
+
             /*----------------------------------------------------------------------------------------------*/
 
             //Getting all the Online players and putting em in an array
             ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+
 
             //Randomly picking impostor among the online player according to the args of the command
             impostors.pickImpostor(playersArray, Integer.parseInt(args[0]));
@@ -65,6 +68,29 @@ public class StartCommand implements CommandExecutor {
                     crewmates.addPlayer(player);
                 }
             }
+
+            //Initialisation des quêtes
+
+            QuestList quest = new QuestList();
+            QuestList quest2 = new QuestList();
+            quest.createQuest();
+            quest2.createQuest();
+            int i = 0;
+            for (Player player : crewmates.getPlayerArrayList()){
+                quest.setPlayer(player);
+                questsCrewmates.add(quest);
+
+                i++;
+            }
+            crewmates.setQuests(questsCrewmates);
+
+            for (Player player : impostors.getPlayerArrayList()){
+                quest2.setPlayer(player);
+                questsImpostors.add(quest2);
+            }
+            impostors.setQuests(questsImpostors);
+
+
 
             //Randomly teleport all connected in duos (if possible) players in a square perimeter of 2000block
             locationUtilities.teleportAllDuoToRandomLocation(playersArray, -1000,1000);

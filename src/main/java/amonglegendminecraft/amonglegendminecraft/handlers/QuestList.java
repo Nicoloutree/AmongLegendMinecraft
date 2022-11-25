@@ -10,11 +10,27 @@ import java.util.HashMap;
 
 public class QuestList {
 
-    private ArrayList<Quest> questsForAllPlayers;
+    private ArrayList<Quest> questsForPlayer;
+    private Player player;
 
+    public ArrayList<Quest> getQuestsForPlayer() {
+        return questsForPlayer;
+    }
+
+    public void setQuestsForPlayer(ArrayList<Quest> questsForPlayer) {
+        this.questsForPlayer = questsForPlayer;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 
     public QuestList(){
-        this.questsForAllPlayers = new ArrayList<>();
+        this.questsForPlayer = new ArrayList<>();
 
     }
 
@@ -29,14 +45,12 @@ public class QuestList {
         Quest queteEnderman = new Quest("Enderman", "Tuer 2 Enderman", false);
 
         //Ajout dans un arrayList de Quest
-        questsForAllPlayers.add(queteBois);
-        questsForAllPlayers.add(queteCobblestone);
-        questsForAllPlayers.add(queteZombie);
-        questsForAllPlayers.add(queteEnderman);
+        questsForPlayer.add(queteBois);
+        questsForPlayer.add(queteCobblestone);
+        questsForPlayer.add(queteZombie);
+        questsForPlayer.add(queteEnderman);
 
     }
 
-    public ArrayList<Quest> getQuestsForAllPlayers() {
-        return questsForAllPlayers;
-    }
+
 }
