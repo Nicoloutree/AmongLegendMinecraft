@@ -16,6 +16,7 @@ public class InventoryCheck implements Listener {
 
     private final ChatUtilities chatUtilities = new ChatUtilities();
 
+    /*
     @Deprecated
     @EventHandler
     public void onItemPickup(PlayerPickupItemEvent event) {
@@ -47,4 +48,6 @@ public class InventoryCheck implements Listener {
     public boolean check_player(Player p, Item item,Material material) {
         return item.getItemStack().getType() == material;
     }
+
+     */
 }

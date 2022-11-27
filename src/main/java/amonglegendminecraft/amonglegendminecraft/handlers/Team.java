@@ -58,6 +58,7 @@ public abstract class Team {
 
     public void emptyTeam(){
         this.playerArrayList.clear();
+        this.quests.clear();
     }
 
     public String playerArrayListToString() { //TO DO Check the toString methods from java to see if it's usable in this case
@@ -84,6 +85,24 @@ public abstract class Team {
                 player.sendTitle(RED + title, message);
             }
         }
+    }
+
+    public boolean questDone(String questName){
+        for (QuestList questList : quests) {
+            if (questList.isQuestDone(questName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public QuestList getQuestList(Player player) throws Exception {
+        for (QuestList questList : quests){
+            if (questList.getPlayer() == player){
+                return questList;
+            }
+        }
+        throw new Exception("Problème avec le getQuest");
     }
 
 }

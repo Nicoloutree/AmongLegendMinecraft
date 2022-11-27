@@ -1,4 +1,5 @@
 amonglegendminecraft\amonglegendminecraft\handlers\QuestList.class
+amonglegendminecraft\amonglegendminecraft\commands\ValidateQuest.class
 amonglegendminecraft\amonglegendminecraft\handlers\TimeEvent$1.class
 amonglegendminecraft\amonglegendminecraft\handlers\CrewmateTeam.class
 amonglegendminecraft\amonglegendminecraft\listeners\CommonListeners.class

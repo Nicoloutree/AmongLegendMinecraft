@@ -10,3 +10,8 @@ commands:
     description: "start the game"
     usage: /<command>
     aliases: [startGame,s]
+
+  quest:
+    description: "validateQuest"
+    usage: /<command>
+    aliases: [ValidateQuest,q]

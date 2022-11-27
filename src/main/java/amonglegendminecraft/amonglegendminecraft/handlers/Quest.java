@@ -1,5 +1,6 @@
 package amonglegendminecraft.amonglegendminecraft.handlers;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Score;
 
@@ -8,23 +9,29 @@ import java.util.ArrayList;
 public class Quest {
 
     private String questName;
-
-
     private String questDescription;
-
+    private int compteur;
     private boolean done;
 
-    private Player player;
 
-    public Quest(String questName, String questDescription, boolean done) {
+    public Quest(String questName, String questDescription, boolean done, int compteur) {
         this.questName = questName;
         this.questDescription = questDescription;
         this.done = done;
+        this.compteur = compteur;
     }
 
 
     public void setQuestName(String questName) {
         this.questName = questName;
+    }
+
+    public int getCompteur() {
+        return compteur;
+    }
+
+    public void setCompteur(int compteur) {
+        this.compteur = compteur;
     }
 
     public void setQuestDescription(String questDescription) {
@@ -36,9 +43,7 @@ public class Quest {
         this.done = done;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
+
 
     public String getQuestName() {
         return questName;
@@ -53,9 +58,7 @@ public class Quest {
         return done;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
+
 
 
     public Quest(){
