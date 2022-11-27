@@ -89,44 +89,27 @@ public class CommonListeners implements Listener {
         }
 
     }
-/*
-    @Deprecated
+
     @EventHandler
-    public void onItemPickup(PlayerPickupItemEvent event){
-        chatUtilities.broadcast("OnItemPickup");
-        final Player p = event.getPlayer();
-
-
-        if (event.getItem().getItemStack().getType() == Material.OAK_LOG){
-            for (int i = 0; i < event.getItem().getItemStack().getAmount(); i++){
-
-                chatUtilities.broadcast("Le joueur " + p.getName() +"a ramassé du bois de boulot");
+    public void onEntityDeath(EntityDeathEvent event) throws Exception {
+        final Player player = event.getEntity().getKiller();
+        chatUtilities.broadcast("Une entity est mort");
+        if (event.getEntityType().getName().compareToIgnoreCase("Zombie") == 0){
+            chatUtilities.broadcast("C'est un zombie et " + player.getName() + " l'a tué comme un fdp");
+            if (player.getScoreboard().getObjective("Quest").getScore("Zombie").getScore() > 0){
+                player.getScoreboard().getObjective("Quest").getScore("Zombie").setScore(player.getScoreboard().getObjective("Quest").getScore("Zombie").getScore()-1);
+            }else{
+                if (crewmates.isFromTeam(player)){
+                    crewmates.getQuestList(player).getQuest("Zombie").setDone(true);
+                }else{
+                    impostors.getQuestList(player).getQuest("Zombie").setDone(true);
+                }
+                player.sendMessage("Vous avez terminé la quête Zombie !");
+                player.getScoreboard().getObjective("Quest").getScore("Zombie").resetScore();
             }
+
         }
-
     }
-
-    @EventHandler
-    public void onEntityDeath(EntityDeathEvent event){
-
-
-
-
-    }
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

@@ -73,14 +73,12 @@ public class StartCommand implements CommandExecutor {
 
             QuestList quest = new QuestList();
             QuestList quest2 = new QuestList();
-            quest.createQuest();
-            quest2.createQuest();
-            int i = 0;
+            quest.createQuest(3);
+            quest2.createQuest(3);
+
             for (Player player : crewmates.getPlayerArrayList()){
                 quest.setPlayer(player);
                 questsCrewmates.add(quest);
-
-                i++;
             }
             crewmates.setQuests(questsCrewmates);
 

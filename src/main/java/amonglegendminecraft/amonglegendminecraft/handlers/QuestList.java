@@ -72,8 +72,9 @@ public class QuestList {
     }
 
 
-    public void createQuest() {
+    public void createQuest(int nbQuests) {
 
+        ArrayList<Quest> temp = new ArrayList<>();
         //Création de quête
         Quest queteBois = new Quest("Bois","Avoir 10 bûche de chêne", false, 10);
         Quest queteCobblestone = new Quest("Cobblestone","Avoir 4 stacks de cobblestone",false, 10);
@@ -81,10 +82,15 @@ public class QuestList {
         Quest queteEnderman = new Quest("Enderman", "Tuer 2 Enderman", false, 10);
 
         //Ajout dans un arrayList de Quest
-        questsForPlayer.add(queteBois);
-        questsForPlayer.add(queteCobblestone);
-        questsForPlayer.add(queteZombie);
-        questsForPlayer.add(queteEnderman);
+        temp.add(queteBois);
+        temp.add(queteCobblestone);
+        temp.add(queteZombie);
+        temp.add(queteEnderman);
+
+        Collections.shuffle(temp);
+        for (int i = 0; i < nbQuests; i++){
+            questsForPlayer.add(temp.get(i));
+        }
 
     }
 

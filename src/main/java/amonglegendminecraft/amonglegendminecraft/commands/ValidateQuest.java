@@ -38,6 +38,14 @@ public class ValidateQuest implements CommandExecutor {
                     e.printStackTrace();
                 }
             }
+            if (args[0].compareToIgnoreCase("zombie") == 0){
+                try {
+                    questZombie(player);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
 
 
@@ -54,7 +62,7 @@ public class ValidateQuest implements CommandExecutor {
         int res = 0;
 
         if (gameData.getCrewmates().isFromTeam(player)){
-            if (!gameData.getCrewmates().questDone("bois")) {               //Le joueur n'a pas effectué la quête
+            if (!gameData.getCrewmates().getQuestList(player).isQuestDone("bois")) {               //Le joueur n'a pas effectué la quête
                 if (materialQuestIsValidate(player, Material.OAK_LOG, 10)) {                          //Est-ce que le player a 10 oak log
                     gameData.getCrewmates().getQuestList(player).questValidate("bois");
                     player.getScoreboard().getObjective("Quest").getScore("Bois").resetScore();
@@ -75,7 +83,7 @@ public class ValidateQuest implements CommandExecutor {
                 player.sendMessage("T'as déjà fait la quête bouffon/enculé");
             }
         }else{
-            if (!gameData.getImpostors().questDone("bois")) {               //Le joueur n'a pas effectué la quête
+            if (!gameData.getImpostors().getQuestList(player).isQuestDone("bois")) {               //Le joueur n'a pas effectué la quête
                 if (materialQuestIsValidate(player, Material.OAK_LOG, 10)) {                          //Est-ce que le player a 10 oak log
                     gameData.getImpostors().getQuestList(player).questValidate("bois");
                     player.getScoreboard().getObjective("Quest").getScore("Bois").resetScore();
@@ -86,12 +94,32 @@ public class ValidateQuest implements CommandExecutor {
                     player.sendMessage("Description : " + gameData.getImpostors().getQuestList(player).getQuest("bois").getQuestDescription());
                     if (player.getInventory().contains(Material.OAK_LOG)){
                         res = gameData.getImpostors().getQuestList(player).getQuest("bois").getCompteur() - player.getInventory().getItem(player.getInventory().first(Material.OAK_LOG)).getAmount();
+                        player.getScoreboard().getObjective("Quest").getScore("bois").setScore(res);
                         player.sendMessage("Il vous manque "+ res + "bois");
                     }else{
                         player.sendMessage("Il vous manque " + gameData.getImpostors().getQuestList(player).getQuest("bois").getCompteur() + "bois");
                     }
                 }
 
+            }else{
+                player.sendMessage("T'as déjà fait la quête bouffon/enculé");
+            }
+        }
+
+    }
+
+    public void questZombie(Player player) throws Exception {
+        if (gameData.getCrewmates().isFromTeam(player)){
+            if (!gameData.getCrewmates().getQuestList(player).isQuestDone("Zombie")){
+                player.sendMessage("Quête : Zombie");
+                player.sendMessage("Description : " + gameData.getCrewmates().getQuestList(player).getQuest("Zombie").getQuestDescription());
+            }else{
+                player.sendMessage("T'as déjà fait la quête bouffon/enculé");
+            }
+        }else{
+            if (!gameData.getImpostors().getQuestList(player).isQuestDone("Zombie")){
+                player.sendMessage("Quête : Zombie");
+                player.sendMessage("Description : " + gameData.getImpostors().getQuestList(player).getQuest("Zombie").getQuestDescription());
             }else{
                 player.sendMessage("T'as déjà fait la quête bouffon/enculé");
             }
