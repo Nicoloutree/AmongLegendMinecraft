@@ -1,9 +1,9 @@
 package amonglegendminecraft.amonglegendminecraft.handlers;
 
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static java.awt.Color.RED;
 import static org.bukkit.ChatColor.BLUE;
@@ -59,6 +59,9 @@ public abstract class Team {
     public void emptyTeam(){
         this.playerArrayList.clear();
         this.quests.clear();
+        for (Player player : playerArrayList) {
+            player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+        }
     }
 
     public String playerArrayListToString() { //TO DO Check the toString methods from java to see if it's usable in this case
@@ -94,6 +97,22 @@ public abstract class Team {
             }
         }
         return false;
+    }
+
+    public boolean allQuestDone(){
+
+        ChatUtilities chatUtilities = new ChatUtilities();
+        for(QuestList questlist : getQuests()){
+            chatUtilities.broadcast("Nom du joueur qu'on check : " + questlist.getPlayer());
+            for (Quest quest : questlist.getQuestsForPlayer()){
+                chatUtilities.broadcast("Nom de la quête qu'on check : " + quest.getQuestName());
+                chatUtilities.broadcast("état de cette quest : " + quest.isDone());
+                if (!quest.isDone()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public QuestList getQuestList(Player player) throws Exception {

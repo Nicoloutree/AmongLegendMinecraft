@@ -23,6 +23,11 @@ public class QuestList {
         return questsForPlayer;
     }
 
+    public void removeQuests(){
+        questsForPlayer.clear();
+
+    }
+
     public void setQuestsForPlayer(ArrayList<Quest> questsForPlayer) {
         this.questsForPlayer = questsForPlayer;
     }
@@ -63,7 +68,12 @@ public class QuestList {
             if (quest.compareToIgnoreCase(questToCheck.getQuestName()) == 0) {
                 if (quest.compareToIgnoreCase("bois") == 0){
                     questToCheck.setDone(true);
-
+                }else if(quest.compareToIgnoreCase("cobblestone") == 0){
+                    questToCheck.setDone(true);
+                }else if(quest.compareToIgnoreCase("zombie") == 0){
+                    questToCheck.setDone(true);
+                }else if(quest.compareToIgnoreCase("enderman") == 0){
+                    questToCheck.setDone(true);
                 }
 
             }
@@ -74,6 +84,7 @@ public class QuestList {
 
     public void createQuest(int nbQuests) {
 
+        questsForPlayer.clear();
         ArrayList<Quest> temp = new ArrayList<>();
         //Création de quête
         Quest queteBois = new Quest("Bois","Avoir 10 bûche de chêne", false, 10);

@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -77,6 +78,7 @@ public class CommonListeners implements Listener {
             impostors.emptyTeam();
 
 
+
         }else if (crewmates.getPlayerArrayList().isEmpty()){                                    //S'il n'y a plus de crewmates (les impostors ont win)
             ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
             for(Player player : playersArray){                                                  //On parcours tout les joueurs en ligne
@@ -92,22 +94,51 @@ public class CommonListeners implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) throws Exception {
-        final Player player = event.getEntity().getKiller();
+        final Player player = event.getEntity().getKiller();        //On récupère le joueur qui a tué l'entité
         chatUtilities.broadcast("Une entity est mort");
-        if (event.getEntityType().getName().compareToIgnoreCase("Zombie") == 0){
-            chatUtilities.broadcast("C'est un zombie et " + player.getName() + " l'a tué comme un fdp");
-            if (player.getScoreboard().getObjective("Quest").getScore("Zombie").getScore() > 0){
-                player.getScoreboard().getObjective("Quest").getScore("Zombie").setScore(player.getScoreboard().getObjective("Quest").getScore("Zombie").getScore()-1);
-            }else{
-                if (crewmates.isFromTeam(player)){
-                    crewmates.getQuestList(player).getQuest("Zombie").setDone(true);
-                }else{
-                    impostors.getQuestList(player).getQuest("Zombie").setDone(true);
-                }
-                player.sendMessage("Vous avez terminé la quête Zombie !");
-                player.getScoreboard().getObjective("Quest").getScore("Zombie").resetScore();
-            }
+        if (event.getEntityType().getName().compareToIgnoreCase("Zombie") == 0){      //Si l'entity est un zombie
+            questEntity(player,"Zombie");                                       //On lance la méthode "questEntity"
+        }else if(event.getEntityType().getName().compareToIgnoreCase("Enderman") == 0){     //Si c'est un enderman
+            questEntity(player,"Enderman");                                           //On lance la méthode "questEntity"
+        }
 
+    }
+
+    public void questEntity(Player player, String nameEntity) throws Exception {
+        if (player.getScoreboard().getObjective("Quest").getScore(nameEntity).getScore() > 1){      //Si le score du joueur est supérieur à 1
+            player.getScoreboard().getObjective("Quest").getScore(nameEntity).setScore(player.getScoreboard().getObjective("Quest").getScore(nameEntity).getScore()-1); //On lui décrémente son nombre d'entité à tuer
+        }else{ //Sinon, le joueur à réussit la quête
+            if (crewmates.isFromTeam(player)){
+                if (!crewmates.getQuestList(player).getQuest(nameEntity).isDone()){
+                    crewmates.getQuestList(player).getQuest(nameEntity).setDone(true);
+                    player.sendMessage("Vous avez terminé la quête "+nameEntity+" !");
+                    player.getScoreboard().getObjective("Quest").getScore(nameEntity).resetScore();
+                }
+            }else{
+                if (!impostors.getQuestList(player).getQuest(nameEntity).isDone()){
+                    impostors.getQuestList(player).getQuest(nameEntity).setDone(true);
+                    player.sendMessage("Vous avez terminé la quête "+nameEntity+" !");
+                    player.getScoreboard().getObjective("Quest").getScore(nameEntity).resetScore();
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerEarnExp(PlayerExpChangeEvent event){
+        final Player player = event.getPlayer();
+
+        if (crewmates.isFromTeam(player)){
+                chatUtilities.broadcast("toutes les quêtes finito? " + crewmates.allQuestDone());
+            if (crewmates.allQuestDone()){
+                ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+                for(Player p : playersArray){
+                    p.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + crewmates.getPlayerArrayList().size()+ " crewmates");
+                }
+                crewmates.emptyTeam();
+                impostors.emptyTeam();
+
+            }
         }
     }
 
