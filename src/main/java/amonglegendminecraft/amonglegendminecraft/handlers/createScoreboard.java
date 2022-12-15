@@ -39,17 +39,16 @@ public class createScoreboard {
 
     public void createBoardForPlayers(ArrayList<QuestList> questList, int nbQuest){
 
-        ChatUtilities chatUtilities = new ChatUtilities();
         for (int y = 0; y < questList.size(); y++){
-            chatUtilities.broadcast("Joueur qu'on check : " + questList.get(y).getPlayer().getName());
-            chatUtilities.broadcast("Nombre de quêtes qu'il a : " + questList.get(y).getQuestsForPlayer());
+            ChatUtilities.broadcast("Joueur qu'on check : " + questList.get(y).getPlayer().getName());
+            ChatUtilities.broadcast("Nombre de quêtes qu'il a : " + questList.get(y).getQuestsForPlayer());
         }
 
 
         for (int i = 0; i < questList.size(); i++) {//Parcours de tout les joueurs
 
             createBoard();                                                  //On créer le board (1 seul par joueur)
-            chatUtilities.broadcast("Nom du joueur auquel on attribue les quêtes : " + questList.get(i).getPlayer().getName());
+            ChatUtilities.broadcast("Nom du joueur auquel on attribue les quêtes : " + questList.get(i).getPlayer().getName());
             for (int k = 0; k < nbQuest; k++) {                             //Parcours du nombre de quest à attribuer par joueur
                 addObjective(nbQuest, questList.get(i).getQuestsForPlayer().get(k)); //On ajoute chaque quête pour chaque joueur
             }

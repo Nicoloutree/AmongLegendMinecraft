@@ -11,19 +11,19 @@ import java.util.Random;
 
 
 public class LocationUtilities {
-    private final Location spawnLocation = new Location(
+    private static final Location spawnLocation = new Location(
             Bukkit.getWorld("world"),0, 0,0).toHighestLocation();
 
-    public void teleportToSpawn(Player player) {
+    public static void teleportToSpawn(Player player) {
         player.teleport(spawnLocation);
     }
 
-    public void teleportAllToSpawn() {
+    public static void teleportAllToSpawn() {
         for (Player p : Bukkit.getOnlinePlayers())
             teleportToSpawn(p);
     }
     //Teleporte un joueur aléatoirement dans le perimetre min max
-    public void teleportToRandomLocation(Player player,int min, int max){
+    public static void teleportToRandomLocation(Player player,int min, int max){
         int x = randomNum(min, max);
         int height = 0;
         int z = randomNum(min, max);
@@ -32,7 +32,7 @@ public class LocationUtilities {
 
     }
     //Téléporte deux joueurs au meme endroit aléatoirement dans un perimetre min max
-    public void teleportDuoToRandomLocation(Player player,Player player2, int min, int max){
+    public static void teleportDuoToRandomLocation(Player player,Player player2, int min, int max){
         int x = randomNum(min, max);
         int height = 0;
         int z = randomNum(min, max);
@@ -42,7 +42,7 @@ public class LocationUtilities {
     }
 
     //Téléporte tout les joueurs en duo, si il y a un nombre impair de joueurs, le dernier joueur est seul
-    public void teleportAllDuoToRandomLocation(ArrayList<Player> playerArrayList,int min,int max){
+    public static void teleportAllDuoToRandomLocation(ArrayList<Player> playerArrayList,int min,int max){
         Collections.shuffle(playerArrayList);
         for (int i=0;i<playerArrayList.size();i+=2){
             if(i+1<playerArrayList.size())
@@ -51,7 +51,7 @@ public class LocationUtilities {
         }
     }
 
-    private int randomNum(Integer lownum, Integer highnum) {
+    private static int randomNum(Integer lownum, Integer highnum) {
         Random rand = new Random();
         return lownum + (int) (rand.nextDouble() * ((highnum - lownum) + 1));
     }

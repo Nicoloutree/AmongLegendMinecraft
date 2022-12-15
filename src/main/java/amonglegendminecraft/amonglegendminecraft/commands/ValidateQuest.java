@@ -36,7 +36,6 @@ public class ValidateQuest implements CommandExecutor {
         if (command.getName().equalsIgnoreCase("quest")) {
 
             Player player = ((Player) sender).getPlayer();
-            ChatUtilities chatUtilities = new ChatUtilities();
 
 
 

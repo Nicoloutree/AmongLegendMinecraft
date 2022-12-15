@@ -1,7 +1,6 @@
 package amonglegendminecraft.amonglegendminecraft.commands;
 
 import amonglegendminecraft.amonglegendminecraft.handlers.*;
-import amonglegendminecraft.amonglegendminecraft.handlers.Team;
 import amonglegendminecraft.amonglegendminecraft.listeners.CommonListeners;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
@@ -11,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
@@ -59,10 +59,6 @@ public class StartCommand implements CommandExecutor {
                 questsImpostors.clear();
                 questsCrewmates.clear();
 
-                LocationUtilities locationUtilities = new LocationUtilities();
-                ChatUtilities chatUtilities =  new ChatUtilities();
-
-
                 impostors = new ImpostorTeam("Impostors", new ArrayList<>());
                 crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
 
@@ -85,8 +81,6 @@ public class StartCommand implements CommandExecutor {
 
                 //Initialisation des quêtes
 
-
-                QuestList quest2 = new QuestList();
 
                 for (int i = 0; i < crewmates.getPlayerArrayList().size(); i++){
                     questsCrewmates.add(new QuestList());
@@ -112,7 +106,7 @@ public class StartCommand implements CommandExecutor {
 
 
                 //Randomly teleport all connected in duos (if possible) players in a square perimeter of 2000block
-                locationUtilities.teleportAllDuoToRandomLocation(playersArray, -100,100);
+                LocationUtilities.teleportAllDuoToRandomLocation(playersArray, -100,100);
 
                 //Display teamnanme on the screen of all the players
                 crewmates.displayTeam(args[0]);
@@ -125,11 +119,11 @@ public class StartCommand implements CommandExecutor {
                 commonListeners.setImpostors(impostors);
 
                 setGameStarted(true);
-                chatUtilities.broadcast("everything executed");
+                ChatUtilities.broadcast("everything executed");
 
             }else{
-                ChatUtilities chatUtilities =  new ChatUtilities();
-                chatUtilities.broadcast("Une partie est déjà en cours d'exécution !");
+
+                ChatUtilities.broadcast("Une partie est déjà en cours d'exécution !");
                 return false;
             }
         }

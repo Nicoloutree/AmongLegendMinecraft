@@ -11,7 +11,6 @@ public class PlayerJoin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        LocationUtilities locationUtilities = new LocationUtilities();
-        locationUtilities.teleportToSpawn(player);
+        LocationUtilities.teleportToSpawn(player);
     }
 }

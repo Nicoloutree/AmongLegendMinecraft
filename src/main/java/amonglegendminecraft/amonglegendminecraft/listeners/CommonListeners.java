@@ -30,7 +30,6 @@ import static org.bukkit.ChatColor.BLUE;
 
 public class CommonListeners implements Listener {
 
-    private final ChatUtilities chatUtilities = new ChatUtilities();
     private ImpostorTeam impostors;
     private CrewmateTeam crewmates;
 
@@ -95,7 +94,7 @@ public class CommonListeners implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) throws Exception {
         final Player player = event.getEntity().getKiller();        //On récupère le joueur qui a tué l'entité
-        chatUtilities.broadcast("Une entity est mort");
+        ChatUtilities.broadcast("Une entity est mort");
         if (event.getEntityType().getName().compareToIgnoreCase("Zombie") == 0){      //Si l'entity est un zombie
             questEntity(player,"Zombie");                                       //On lance la méthode "questEntity"
         }else if(event.getEntityType().getName().compareToIgnoreCase("Enderman") == 0){     //Si c'est un enderman
@@ -129,7 +128,7 @@ public class CommonListeners implements Listener {
         final Player player = event.getPlayer();
 
         if (crewmates.isFromTeam(player)){
-                chatUtilities.broadcast("toutes les quêtes finito? " + crewmates.allQuestDone());
+                ChatUtilities.broadcast("toutes les quêtes finito? " + crewmates.allQuestDone());
             if (crewmates.allQuestDone()){
                 ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
                 for(Player p : playersArray){

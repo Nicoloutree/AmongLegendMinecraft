@@ -78,13 +78,12 @@ public abstract class Team {
     }
 
     public void sendTitleToAllPlayers(ArrayList<Player> playerArrayList, String title, String message){
-        ChatUtilities chatUtilities = new ChatUtilities();
         for(Player player : playerArrayList){
             if (getTeamName().equals("Crewmates")){
-                chatUtilities.broadcast("On est dans le if");
+                ChatUtilities.broadcast("On est dans le if");
                 player.sendTitle(BLUE + title, message);
             }else{
-                chatUtilities.broadcast("On est dans le else");
+                ChatUtilities.broadcast("On est dans le else");
                 player.sendTitle(RED + title, message);
             }
         }
@@ -101,12 +100,11 @@ public abstract class Team {
 
     public boolean allQuestDone(){
 
-        ChatUtilities chatUtilities = new ChatUtilities();
         for(QuestList questlist : getQuests()){
-            chatUtilities.broadcast("Nom du joueur qu'on check : " + questlist.getPlayer());
+            ChatUtilities.broadcast("Nom du joueur qu'on check : " + questlist.getPlayer());
             for (Quest quest : questlist.getQuestsForPlayer()){
-                chatUtilities.broadcast("Nom de la quête qu'on check : " + quest.getQuestName());
-                chatUtilities.broadcast("état de cette quest : " + quest.isDone());
+                ChatUtilities.broadcast("Nom de la quête qu'on check : " + quest.getQuestName());
+                ChatUtilities.broadcast("état de cette quest : " + quest.isDone());
                 if (!quest.isDone()) {
                     return false;
                 }
