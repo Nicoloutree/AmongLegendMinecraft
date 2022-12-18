@@ -49,7 +49,7 @@ public class VoteCommand implements CommandExecutor {
 
 
                             }else{
-                                player.sendMessage("Vous avez déjà voté quelqu'un !");
+                                playerWhoVote.sendMessage("Vous avez déjà voté quelqu'un !");
                             }
                         }
                     }

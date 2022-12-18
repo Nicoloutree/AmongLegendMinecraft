@@ -88,9 +88,15 @@ public class LocationUtilities {
         location.set(x,y,z);
     }
 
-    public static void teleportAllPlayersToLocation(ArrayList<Player> players, Location location){
+    public static void teleportAllPlayersToLocationForMeeting(ArrayList<Player> players, Location location, float taillebase){
+        double x = location.getX()+(taillebase/2);
+        double y = location.getY()+1;
+        double z = location.getZ()+(taillebase/2);
+
+        Location location2 = new Location(Bukkit.getWorld("world"),x,y,z);
+
         for (Player player : players) {
-            player.teleport(location);
+            player.teleport(location2);
         }
     }
 }

@@ -19,12 +19,21 @@ import java.util.ArrayList;
 
 public class StartCommand implements CommandExecutor {
 
+    private MeetingCommand meetingData;
     private CommonListeners commonListeners = new CommonListeners();
     private ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
     private CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
     private ArrayList<QuestList> questsCrewmates = new ArrayList<QuestList>();
     private ArrayList<QuestList> questsImpostors = new ArrayList<QuestList>();
     private boolean gameStarted = false;
+
+    public MeetingCommand getMeetingData() {
+        return meetingData;
+    }
+
+    public void setMeetingData(MeetingCommand meetingData) {
+        this.meetingData = meetingData;
+    }
 
     public boolean isGameStarted() {
         return gameStarted;
@@ -120,12 +129,14 @@ public class StartCommand implements CommandExecutor {
                 impostors.initialiseQuestsPerPlayers(3);
                 crewmates.initialiseQuestsPerPlayers(3);
 
+                setGameStarted(true);
+
                 commonListeners.setCrewmates(crewmates);
                 commonListeners.setImpostors(impostors);
+                commonListeners.setMeetingCommand(meetingData);
+                commonListeners.setHasStarted(true);
 
 
-
-                setGameStarted(true);
                 ChatUtilities.broadcast("everything executed");
 
             }else{
