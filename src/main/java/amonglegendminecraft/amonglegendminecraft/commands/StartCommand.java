@@ -5,6 +5,9 @@ import amonglegendminecraft.amonglegendminecraft.listeners.CommonListeners;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -42,6 +45,8 @@ public class StartCommand implements CommandExecutor {
     public CrewmateTeam getCrewmates() {
         return crewmates;
     }
+
+
 
 
 
@@ -118,6 +123,8 @@ public class StartCommand implements CommandExecutor {
                 commonListeners.setCrewmates(crewmates);
                 commonListeners.setImpostors(impostors);
 
+
+
                 setGameStarted(true);
                 ChatUtilities.broadcast("everything executed");
 
@@ -127,6 +134,8 @@ public class StartCommand implements CommandExecutor {
                 return false;
             }
         }
+
         return true;
     }
+
 }

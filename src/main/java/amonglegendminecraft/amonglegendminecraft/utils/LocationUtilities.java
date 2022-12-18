@@ -1,7 +1,9 @@
 package amonglegendminecraft.amonglegendminecraft.utils;
 
+import jdk.tools.jlink.internal.Platform;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -54,5 +56,41 @@ public class LocationUtilities {
     private static int randomNum(Integer lownum, Integer highnum) {
         Random rand = new Random();
         return lownum + (int) (rand.nextDouble() * ((highnum - lownum) + 1));
+    }
+
+    public static void createPlatform(Location location, int tailleBase, int tailleWall, Material base, Material wall){
+
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+
+
+        for (double i = 0; i < tailleBase; i++){
+            location.set(x+i,y,z).getBlock().setType(base);
+            for (double k = 0; k < tailleBase; k++){
+                location.set(x+i,y,z+k).getBlock().setType(base);
+            }
+        }
+        location.set(x,y,z);
+    }
+
+    public static void removePlatform(Location location, int tailleBase, int tailleWall){
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+
+        for (int i = 0; i < tailleBase; i++){
+            location.set(x+i,y,z).getBlock().setType(Material.AIR);
+            for (int k = 0; k < tailleBase; k++){
+                location.set(x+i,y,z+k).getBlock().setType(Material.AIR);
+            }
+        }
+        location.set(x,y,z);
+    }
+
+    public static void teleportAllPlayersToLocation(ArrayList<Player> players, Location location){
+        for (Player player : players) {
+            player.teleport(location);
+        }
     }
 }

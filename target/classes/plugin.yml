@@ -15,3 +15,13 @@ commands:
     description: "validateQuest"
     usage: /<command>
     aliases: [ValidateQuest,q]
+
+  meeting:
+    description: "meeting"
+    usage: /<command>
+    aliases: [MeetingCommand,m]
+
+  vote:
+    description: "vote"
+    usage: /<command>
+    aliases: [VoteCommand,v]

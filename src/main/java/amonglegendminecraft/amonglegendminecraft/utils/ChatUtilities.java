@@ -16,4 +16,9 @@ public class ChatUtilities {
         return DARK_GRAY + "[" + RED + "AmongMinecraftLegend" + DARK_GRAY + "] "
                 + WHITE;
     }
+
+    public static void title(String titre, String subtitle){
+        for(Player player : Bukkit.getOnlinePlayers())
+            player.sendTitle(titre,subtitle);
+    }
 }
