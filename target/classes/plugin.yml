@@ -29,4 +29,4 @@ commands:
   sabotage:
     description: "sabotage"
     usage: /<command>
-    aliases: [SabotageCommand,s]
+    aliases: [SabotageCommand,sab]

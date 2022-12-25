@@ -21,6 +21,7 @@ public class ImpostorTeam extends Team{
         Collections.shuffle(playerArrayList);
         for (int i = 0 ; i <= nbImpo-1; i++){
             this.addPlayer(playerArrayList.get(i));
+            playerArrayList.get(i).setTeam(this);
         }
     }
     public ArrayList<Sabotage> getSabotageArrayList() {

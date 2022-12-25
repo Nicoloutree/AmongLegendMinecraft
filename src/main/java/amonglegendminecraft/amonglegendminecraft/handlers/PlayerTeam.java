@@ -41,6 +41,7 @@ public class PlayerTeam {
 
     public void setWallet(int wallet) {
         this.wallet = wallet;
+        player.getPlayer().getScoreboard().getObjective("Quest").getScore("Portefeuille").setScore(wallet);
     }
 
     public ArrayList<PlayerTeam> getPlayersThatVoted() {

@@ -135,7 +135,7 @@ public class CommonListeners implements Listener {
 
 
 
-
+        //--------------------------Récupération de la tête du joueur----------------------------//
             Location deathLocation = p.getLocation();
             ItemStack skull = new ItemStack(Material.LEGACY_SKULL_ITEM,1,(short) 3);
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
@@ -143,47 +143,58 @@ public class CommonListeners implements Listener {
             meta.setDisplayName(p.getName());
             skull.setItemMeta(meta);
 
-            ArmorStand armorStand = p.getPlayer().getWorld().spawn(deathLocation, ArmorStand.class);
+        //--------------------------Création du armorStand quand le joueur meurt----------------------------//
+
+        ArmorStand armorStand = p.getPlayer().getWorld().spawn(deathLocation, ArmorStand.class);
             armorStand.getEquipment().setHelmet(skull);
             armorStand.setInvulnerable(true);
             meetingCommand.getArmorStands().add(armorStand);
 
+        //--------------------------Récupération de la tête du joueur----------------------------//
 
-            for (int i = 0; i < crewmates.getPlayerArrayList().size(); i++){
-                if (crewmates.getPlayerArrayList().get(i).getPlayer() == p){
-                    y = i;
-                }
+        int h = 0;
+            //k = imposteur
+            //y = crewmates
+        for (int i = 0; i < playerTeamArrayList.size(); i++){
+            if (playerTeamArrayList.get(i).getPlayer() == p){
+                h = i;
             }
+        }
 
-            if (y == -1){
-                for (int i = 0; i < impostors.getPlayerArrayList().size(); i++){
-                    if (impostors.getPlayerArrayList().get(i).getPlayer() == p){
-                        k = i;
+        if (playerTeamArrayList.get(h).getTeam().getTeamName().compareToIgnoreCase("Crewmates") == 0){
+            crewmates.removePlayer(playerTeamArrayList.get(h));
+        }else{
+            impostors.removePlayer(playerTeamArrayList.get(h));
+        }
+
+        int z = 0;
+        for (int i = 0; i < impostors.getPlayerArrayList().size(); i++){
+            if (p.getKiller() == impostors.getPlayerArrayList().get(i).getPlayer()){
+                z = i;
+            }
+        }
+        if(p.getKiller() == impostors.getPlayerArrayList().get(z).getPlayer()){
+            impostors.getPlayerArrayList().get(z).setCanKill(false);
+            BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+            int finalZ = z;
+            SwordUtilities.removeImpostorSword(impostors.getPlayerArrayList().get(finalZ).getPlayer());
+            scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
+            int cd = impostors.getPlayerArrayList().get(finalZ).getCooldown();
+
+                @Override
+                public void run() {
+
+                    if (cd == 0){
+                        impostors.getPlayerArrayList().get(finalZ).setCanKill(true);
+                        SwordUtilities.giveImpostorSword(impostors.getPlayerArrayList().get(finalZ).getPlayer());
+                        scheduler.cancelTasks(AmongLegendMinecraft.plugin);
                     }
-                }
-                impostors.removePlayer(impostors.getPlayerArrayList().get(k));
-            }else{
-                crewmates.removePlayer(crewmates.getPlayerArrayList().get(y));
-                if(p.getKiller() == impostors.getPlayerArrayList().get(k).getPlayer()){
-                    impostors.getPlayerArrayList().get(k).setCanKill(false);
-                    BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-                    int finalK = k;
-                    scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
-                    int cd = impostors.getPlayerArrayList().get(finalK).getCooldown();
-                        @Override
-                        public void run() {
 
-                            if (cd == 0){
-                                impostors.getPlayerArrayList().get(finalK).setCanKill(true);
-                                SwordUtilities.giveImpostorSword(impostors.getPlayerArrayList().get(finalK).getPlayer());
-                                scheduler.cancelTasks(AmongLegendMinecraft.plugin);
-                            }
-
-                            cd--;
-                        }
-                    }, 0L,20L); //20 tick = 1 seconde
+                    cd--;
                 }
-            }
+            }, 0L,20L); //20 tick = 1 seconde
+        }
+
 
             if (impostors.getPlayerArrayList().isEmpty()){                                          //S'il n'y a plus d'impostor (les crewmates ont win)
                 ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
@@ -196,6 +207,7 @@ public class CommonListeners implements Listener {
                 crewmates.emptyTeam();
                 impostors.emptyTeam();
                 setHasStarted(false);
+
 
 
 

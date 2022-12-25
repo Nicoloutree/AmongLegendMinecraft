@@ -117,11 +117,8 @@ public class MeetingCommand implements CommandExecutor {
                     locations.add(playersArray.get(i).getLocation());
                 }
 
-                ChatUtilities.broadcast("meetingLocation value : " + meetingLocation.getX() + " " + meetingLocation.getY() + " " + meetingLocation.getZ());
                 LocationUtilities.teleportAllPlayersToLocationForMeeting(playersArray, meetingLocation, taillebase);
-                ChatUtilities.broadcast("meetingLocation value : " + meetingLocation.getX() + " " + meetingLocation.getY() + " " + meetingLocation.getZ());
                 LocationUtilities.createPlatform(meetingLocation,taillebase, taillewall, Material.OAK_LOG,Material.COBBLESTONE);
-                ChatUtilities.broadcast("meetingLocation value : " + meetingLocation.getX() + " " + meetingLocation.getY() + " " + meetingLocation.getZ());
 
                 Bukkit.getWorld("world").setPVP(false);
 
@@ -140,24 +137,16 @@ public class MeetingCommand implements CommandExecutor {
 
                             int k = 0;
                             int compteur = 0;
-                            ChatUtilities.broadcast("Vérif des votes");
                             for (int i = 0; i < playerVoteds.size() && compteur != -1; i++){
-                                ChatUtilities.broadcast("Joueur qu'on vérif : " + playerVoteds.get(i).getPlayer().getName());
-                                ChatUtilities.broadcast("Nombre de votes du joueurs : " + playerVoteds.get(i).getNbVotes());
-                                ChatUtilities.broadcast("valeur de compteur : " + compteur);
+
                                 if (compteur < playerVoteds.get(i).getNbVotes()){
-                                    ChatUtilities.broadcast("Compteur < nb votes du joueur");
                                     compteur = playerVoteds.get(i).getNbVotes();
                                     k = i;
                                 }else if(compteur == playerVoteds.get(i).getNbVotes() && compteur != 0){
-                                    ChatUtilities.broadcast("compteur == nb votes du joueur");
                                     compteur = -1;
-
-                                    ChatUtilities.title("Personne est éjecté", "Deux personnes ont le même nombre de votes");
                                 }
                             }
                             if (compteur == 0){
-                                ChatUtilities.broadcast("compteur == 0");
                                 ChatUtilities.title("Personne est éjecté", "Personne a voté");
                             }else if (compteur != -1){
                                 playerVoteds.get(k).getPlayer().setHealth(0);

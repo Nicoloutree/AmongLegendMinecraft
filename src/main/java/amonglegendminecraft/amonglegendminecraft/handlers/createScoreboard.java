@@ -8,10 +8,13 @@ import org.bukkit.scoreboard.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static org.bukkit.ChatColor.*;
+
 public class createScoreboard {
 
     private static Scoreboard scoreboard;
     private static Objective objective;
+    private static Objective walletObject;
 
     public createScoreboard(){
 
@@ -21,21 +24,43 @@ public class createScoreboard {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         scoreboard = scoreboardManager.getNewScoreboard();
         objective = scoreboard.registerNewObjective("Quest","dummy");
-        objective.setDisplayName("Quest");
+        objective.setDisplayName(YELLOW+"Informations");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
     public static void addObjective(ArrayList<Quest> quests){
         //Ce que j'appelle "score" c'est le truc qui est display à droite de l'écran
         //Genre y'aura écrit par exemple "Bois" ou "Cobblestone" c'est le nom de la quête
-
         Score scorename;
 
         for (int i = 0; i < quests.size(); i++){
             scorename = objective.getScore(quests.get(i).getQuestName());   //On ajoute la quête au score
             scorename.setScore(quests.get(i).getCompteur());                                  //On set le score au compteur (étape obligatoire sinon elle s'affiche pas, merci bukkit)
         }
+        scorename = objective.getScore(GRAY+"----------------");
+        scorename.setScore(0);
     }
+
+    public static void playerInfos(PlayerTeam player){
+        Score scorename;
+        scorename = objective.getScore(GRAY+"----------------");
+        scorename.setScore(0);
+        scorename = objective.getScore(player.getPlayer().getName());
+        scorename.setScore(0);
+        if (player.getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
+            scorename = objective.getScore(RED + player.getTeam().getTeamName());
+            scorename.setScore(0);
+        }else{
+            scorename = objective.getScore(BLUE+ player.getTeam().getTeamName());
+            scorename.setScore(0);
+        }
+        scorename = objective.getScore("Portefeuille");
+        scorename.setScore(player.getWallet());
+        scorename = objective.getScore(GRAY+"----------------");
+        scorename.setScore(0);
+    }
+
+
 
     public static void createBoardForPlayers(ArrayList<PlayerTeam> player){
 
@@ -44,7 +69,7 @@ public class createScoreboard {
 
             createBoard();                                                  //On créer le board (1 seul par joueur)
             ChatUtilities.broadcast("Nom du joueur auquel on attribue les quêtes : " + player.get(i).getPlayer().getName());
-
+            playerInfos(player.get(i));
             addObjective(player.get(i).getQuests());
 
             player.get(i).getPlayer().setScoreboard(scoreboard);  //On attribue le bon board au joueur

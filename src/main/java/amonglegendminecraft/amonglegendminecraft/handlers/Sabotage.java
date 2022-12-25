@@ -1,5 +1,7 @@
 package amonglegendminecraft.amonglegendminecraft.handlers;
 
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 
 public class Sabotage {
@@ -24,6 +26,12 @@ public class Sabotage {
         temp.add(new Sabotage("Octogone","Téléporte un crewmate au hasard et toi dans un octogone sans règle",10));
 
         return temp;
+    }
+
+    public static void afficheSabotage(Sabotage sabotage, PlayerTeam player){
+        player.getPlayer().sendMessage("Nom : " + sabotage.getName());
+        player.getPlayer().sendMessage("Description : " + sabotage.getDescription());
+
     }
 
     public String getName() {

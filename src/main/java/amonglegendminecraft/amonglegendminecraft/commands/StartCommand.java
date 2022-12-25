@@ -22,8 +22,8 @@ public class StartCommand implements CommandExecutor {
     private MeetingCommand meetingData;
     int nbQuest = 3;
     private CommonListeners commonListeners = new CommonListeners();
-    private ImpostorTeam impostors;
-    private CrewmateTeam crewmates;
+    private ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
+    private CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
 
     private ArrayList<PlayerTeam> playerTeamArrayList = new ArrayList<>();
 
@@ -77,6 +77,8 @@ public class StartCommand implements CommandExecutor {
             if (!gameStarted){
                 impostors.emptyTeam();
                 crewmates.emptyTeam();
+                playerTeamArrayList.clear();
+
                 /*---------------------------------------Declaration--------------------------------------------*/
 
 
@@ -101,6 +103,7 @@ public class StartCommand implements CommandExecutor {
                 for(PlayerTeam player : playerTeamArrayList){
                     if(!impostors.isFromTeam(player)){
                         crewmates.addPlayer(player);
+                        player.setTeam(crewmates);
                     }
                 }
 
@@ -127,7 +130,6 @@ public class StartCommand implements CommandExecutor {
                 commonListeners.setHasStarted(true);
 
                 createScoreboard.createBoardForPlayers(playerTeamArrayList);
-
 
                 ChatUtilities.broadcast("everything executed");
 
