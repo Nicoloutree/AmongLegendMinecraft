@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Score;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Quest {
 
@@ -58,6 +59,20 @@ public class Quest {
         return done;
     }
 
+    public static ArrayList<Quest> initializeQuests(int nbQuest){
+        ArrayList<Quest> temp = new ArrayList<>();
+        //Création de quête
+        temp.add(new Quest("Bois","Avoir 10 bûche de chêne", false, 10));
+        temp.add(new Quest("Cobblestone","Avoir 4 stacks de cobblestone",false, 10));
+        temp.add(new Quest("Zombie", "Tuer 10 zombies", false, 10));
+        temp.add(new Quest("Enderman", "Tuer 2 Enderman", false, 10));
+
+        Collections.shuffle(temp);
+        while(temp.size() > nbQuest){
+            temp.remove(0);
+        }
+        return temp;
+    }
 
 
 

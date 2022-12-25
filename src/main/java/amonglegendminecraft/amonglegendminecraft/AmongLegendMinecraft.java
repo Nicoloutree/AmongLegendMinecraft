@@ -1,9 +1,6 @@
 package amonglegendminecraft.amonglegendminecraft;
 
-import amonglegendminecraft.amonglegendminecraft.commands.MeetingCommand;
-import amonglegendminecraft.amonglegendminecraft.commands.StartCommand;
-import amonglegendminecraft.amonglegendminecraft.commands.ValidateQuest;
-import amonglegendminecraft.amonglegendminecraft.commands.VoteCommand;
+import amonglegendminecraft.amonglegendminecraft.commands.*;
 import amonglegendminecraft.amonglegendminecraft.listeners.CommonListeners;
 import amonglegendminecraft.amonglegendminecraft.listeners.InventoryCheck;
 import amonglegendminecraft.amonglegendminecraft.listeners.PlayerJoin;
@@ -17,6 +14,8 @@ public final class AmongLegendMinecraft extends JavaPlugin {
     public ValidateQuest validateQuest = new ValidateQuest();
     public MeetingCommand meetingCommand = new MeetingCommand();
     public VoteCommand voteCommand = new VoteCommand();
+
+    public SabotageCommand sabotageCommand = new SabotageCommand();
 
     @Override
     public void onEnable() {
@@ -33,6 +32,9 @@ public final class AmongLegendMinecraft extends JavaPlugin {
 
         voteCommand.setMeetingData(meetingCommand);
         getCommand("vote").setExecutor(voteCommand);
+
+        sabotageCommand.setGameData(startCommand);
+        getCommand("sabotage").setExecutor(sabotageCommand);
     }
 
     public void registerListerners(){

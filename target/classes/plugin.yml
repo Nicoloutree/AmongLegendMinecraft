@@ -25,3 +25,8 @@ commands:
     description: "vote"
     usage: /<command>
     aliases: [VoteCommand,v]
+
+  sabotage:
+    description: "sabotage"
+    usage: /<command>
+    aliases: [SabotageCommand,s]

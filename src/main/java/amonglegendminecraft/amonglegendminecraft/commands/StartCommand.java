@@ -20,11 +20,17 @@ import java.util.ArrayList;
 public class StartCommand implements CommandExecutor {
 
     private MeetingCommand meetingData;
+    int nbQuest = 3;
     private CommonListeners commonListeners = new CommonListeners();
-    private ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
-    private CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
-    private ArrayList<QuestList> questsCrewmates = new ArrayList<QuestList>();
-    private ArrayList<QuestList> questsImpostors = new ArrayList<QuestList>();
+    private ImpostorTeam impostors;
+    private CrewmateTeam crewmates;
+
+    private ArrayList<PlayerTeam> playerTeamArrayList = new ArrayList<>();
+
+    public ArrayList<PlayerTeam> getPlayerTeamArrayList() {
+        return playerTeamArrayList;
+    }
+
     private boolean gameStarted = false;
 
     public MeetingCommand getMeetingData() {
@@ -69,9 +75,10 @@ public class StartCommand implements CommandExecutor {
                 setGameStarted(false);
             }
             if (!gameStarted){
+                impostors.emptyTeam();
+                crewmates.emptyTeam();
                 /*---------------------------------------Declaration--------------------------------------------*/
-                questsImpostors.clear();
-                questsCrewmates.clear();
+
 
                 impostors = new ImpostorTeam("Impostors", new ArrayList<>());
                 crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
@@ -81,60 +88,45 @@ public class StartCommand implements CommandExecutor {
 
                 //Getting all the Online players and putting em in an array
                 ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+                for(Player player : playersArray){
+                    playerTeamArrayList.add(new PlayerTeam(player,nbQuest));
+                }
+
 
 
                 //Randomly picking impostor among the online player according to the args of the command
-                impostors.pickImpostor(playersArray, Integer.parseInt(args[0]));
+                impostors.pickImpostor(playerTeamArrayList, Integer.parseInt(args[0]));
 
                 //Addding every other player to the crewmate
-                for(Player player : playersArray){
+                for(PlayerTeam player : playerTeamArrayList){
                     if(!impostors.isFromTeam(player)){
                         crewmates.addPlayer(player);
                     }
                 }
 
+                ChatUtilities.broadcast("Joueur dans playerTeamArrayList : ");
+                for (int i = 0; i < playerTeamArrayList.size(); i++){
+                    ChatUtilities.broadcast("Joueur : " + playerTeamArrayList.get(i).getPlayer().getName());
+                    ChatUtilities.broadcast("nbQuest : " + playerTeamArrayList.get(i).getNbQuests());
+                }
                 //Initialisation des quêtes
-
-
-                for (int i = 0; i < crewmates.getPlayerArrayList().size(); i++){
-                    questsCrewmates.add(new QuestList());
-                }
-                for (int i = 0; i < impostors.getPlayerArrayList().size(); i++){
-                    questsImpostors.add(new QuestList());
-                }
-
-
-                for (int i = 0; i < questsCrewmates.size(); i++){
-                    questsCrewmates.get(i).createQuest(3);
-                    questsCrewmates.get(i).setPlayer(crewmates.getPlayerArrayList().get(i));
-                }
-
-                crewmates.setQuests(questsCrewmates);
-
-                for (int i = 0; i < questsImpostors.size(); i++){
-                    questsImpostors.get(i).createQuest(3);
-                    questsImpostors.get(i).setPlayer(impostors.getPlayerArrayList().get(i));
-                }
-
-                impostors.setQuests(questsImpostors);
-
 
                 //Randomly teleport all connected in duos (if possible) players in a square perimeter of 2000block
                 LocationUtilities.teleportAllDuoToRandomLocation(playersArray, -100,100);
-
                 //Display teamnanme on the screen of all the players
                 crewmates.displayTeam(args[0]);
                 impostors.displayTeam(args[0]);
 
-                impostors.initialiseQuestsPerPlayers(3);
-                crewmates.initialiseQuestsPerPlayers(3);
 
                 setGameStarted(true);
 
                 commonListeners.setCrewmates(crewmates);
                 commonListeners.setImpostors(impostors);
+                commonListeners.setPlayerTeamArrayList(playerTeamArrayList);
                 commonListeners.setMeetingCommand(meetingData);
                 commonListeners.setHasStarted(true);
+
+                createScoreboard.createBoardForPlayers(playerTeamArrayList);
 
 
                 ChatUtilities.broadcast("everything executed");

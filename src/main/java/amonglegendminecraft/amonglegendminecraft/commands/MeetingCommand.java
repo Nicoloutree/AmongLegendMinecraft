@@ -1,8 +1,8 @@
 package amonglegendminecraft.amonglegendminecraft.commands;
 
 import amonglegendminecraft.amonglegendminecraft.AmongLegendMinecraft;
-import amonglegendminecraft.amonglegendminecraft.handlers.PlayerVoted;
-import amonglegendminecraft.amonglegendminecraft.handlers.VotePlayers;
+import amonglegendminecraft.amonglegendminecraft.handlers.PlayerTeam;
+
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
 import org.bukkit.Bukkit;
@@ -26,8 +26,8 @@ public class MeetingCommand implements CommandExecutor {
     private StartCommand gameData;
     private int duree;
     private boolean meetingActivate = false;
-    private ArrayList<VotePlayers> votePlayers = new ArrayList<>();
-    private ArrayList<PlayerVoted> playerVoteds = new ArrayList<>();
+
+    private ArrayList<PlayerTeam> playerVoteds = new ArrayList<>();
     private ArrayList<ArmorStand> armorStands = new ArrayList<>();
     private Player playerWhoIsReported;
     private Player playerWhoReport;
@@ -56,11 +56,15 @@ public class MeetingCommand implements CommandExecutor {
         this.armorStands = armorStands;
     }
 
-    public ArrayList<PlayerVoted> getPlayerVoteds() {
+    public ArrayList<PlayerTeam> getPlayerVoteds() {
         return playerVoteds;
     }
 
-    public void setPlayerVoteds(ArrayList<PlayerVoted> playerVoteds) {
+    public void addPlayerVotes(PlayerTeam playerTeam){
+        this.playerVoteds.add(playerTeam);
+    }
+
+    public void setPlayerVoteds(ArrayList<PlayerTeam> playerVoteds) {
         this.playerVoteds = playerVoteds;
     }
 
@@ -68,13 +72,7 @@ public class MeetingCommand implements CommandExecutor {
         return meetingActivate;
     }
 
-    public ArrayList<VotePlayers> getVotePlayers() {
-        return votePlayers;
-    }
 
-    public void setVotePlayers(ArrayList<VotePlayers> votePlayers) {
-        this.votePlayers = votePlayers;
-    }
 
     public StartCommand getGameData() {
         return gameData;
@@ -106,7 +104,6 @@ public class MeetingCommand implements CommandExecutor {
                     ChatUtilities.broadcast("   - " + armorStands.get(i).getEquipment().getHelmet().getItemMeta().getDisplayName());
                 }
             }
-                playerWhoReport.getItemInHand().setAmount(0);
 
                 int taillebase = 10;
                 int taillewall = 10;
@@ -117,19 +114,14 @@ public class MeetingCommand implements CommandExecutor {
 
 
                 for (int i = 0; i < playersArray.size(); i++){
-                    votePlayers.add(i, new VotePlayers(playersArray.get(i)));
-                    playerVoteds.add(i, new PlayerVoted(playersArray.get(i)));
-                }
-
-                for (int i = 0; i < playersArray.size(); i++){
                     locations.add(playersArray.get(i).getLocation());
                 }
 
-            ChatUtilities.broadcast("meetingLocation value : " + meetingLocation.getX() + " " + meetingLocation.getY() + " " + meetingLocation.getZ());
+                ChatUtilities.broadcast("meetingLocation value : " + meetingLocation.getX() + " " + meetingLocation.getY() + " " + meetingLocation.getZ());
                 LocationUtilities.teleportAllPlayersToLocationForMeeting(playersArray, meetingLocation, taillebase);
-            ChatUtilities.broadcast("meetingLocation value : " + meetingLocation.getX() + " " + meetingLocation.getY() + " " + meetingLocation.getZ());
-            LocationUtilities.createPlatform(meetingLocation,taillebase, taillewall, Material.OAK_LOG,Material.COBBLESTONE);
-            ChatUtilities.broadcast("meetingLocation value : " + meetingLocation.getX() + " " + meetingLocation.getY() + " " + meetingLocation.getZ());
+                ChatUtilities.broadcast("meetingLocation value : " + meetingLocation.getX() + " " + meetingLocation.getY() + " " + meetingLocation.getZ());
+                LocationUtilities.createPlatform(meetingLocation,taillebase, taillewall, Material.OAK_LOG,Material.COBBLESTONE);
+                ChatUtilities.broadcast("meetingLocation value : " + meetingLocation.getX() + " " + meetingLocation.getY() + " " + meetingLocation.getZ());
 
                 Bukkit.getWorld("world").setPVP(false);
 
@@ -148,26 +140,32 @@ public class MeetingCommand implements CommandExecutor {
 
                             int k = 0;
                             int compteur = 0;
+                            ChatUtilities.broadcast("Vérif des votes");
                             for (int i = 0; i < playerVoteds.size() && compteur != -1; i++){
+                                ChatUtilities.broadcast("Joueur qu'on vérif : " + playerVoteds.get(i).getPlayer().getName());
+                                ChatUtilities.broadcast("Nombre de votes du joueurs : " + playerVoteds.get(i).getNbVotes());
+                                ChatUtilities.broadcast("valeur de compteur : " + compteur);
                                 if (compteur < playerVoteds.get(i).getNbVotes()){
+                                    ChatUtilities.broadcast("Compteur < nb votes du joueur");
                                     compteur = playerVoteds.get(i).getNbVotes();
                                     k = i;
                                 }else if(compteur == playerVoteds.get(i).getNbVotes() && compteur != 0){
+                                    ChatUtilities.broadcast("compteur == nb votes du joueur");
                                     compteur = -1;
 
                                     ChatUtilities.title("Personne est éjecté", "Deux personnes ont le même nombre de votes");
                                 }
                             }
                             if (compteur == 0){
+                                ChatUtilities.broadcast("compteur == 0");
                                 ChatUtilities.title("Personne est éjecté", "Personne a voté");
                             }else if (compteur != -1){
-                                playerVoteds.get(k).getPlayerVoted().setHealth(0);
-                                ChatUtilities.title(playerVoteds.get(k).getPlayerVoted().getName() + " est éjecté", "Il a obtenu" + compteur + " votes");
+                                playerVoteds.get(k).getPlayer().setHealth(0);
+                                ChatUtilities.title(playerVoteds.get(k).getPlayer().getName() + " est éjecté", "Il a obtenu" + compteur + " votes");
                             }
 
 
                             playerVoteds.clear();
-                            votePlayers.clear();
                             armorStands.clear();
                             playerWhoReport = null;
                             playerWhoIsReported = null;

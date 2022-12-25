@@ -1,7 +1,6 @@
 package amonglegendminecraft.amonglegendminecraft.commands;
 
-import amonglegendminecraft.amonglegendminecraft.handlers.PlayerVoted;
-import amonglegendminecraft.amonglegendminecraft.handlers.VotePlayers;
+import amonglegendminecraft.amonglegendminecraft.handlers.PlayerTeam;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -28,38 +27,38 @@ public class VoteCommand implements CommandExecutor {
 
         if (command.getName().equalsIgnoreCase("vote") && meetingData.isMeetingActivate() && meetingData.getGameData().isGameStarted()) {
 
-            ArrayList<VotePlayers> votes = new ArrayList<>(meetingData.getVotePlayers());
-            ArrayList<PlayerVoted> playerVoteds = new ArrayList<>(meetingData.getPlayerVoteds());
-            ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
             final Player playerWhoVote = ((Player) sender).getPlayer();
+            int y=-1;
+            int k=-1;
 
-            for (Player player : playersArray) {                                                                        //On parcours tout les joueurs en ligne
-                if (player.getName().compareToIgnoreCase(args[0]) == 0) {                                               //On vérifie si le joueur correspond à celui qui est voté
-                    for (VotePlayers vote : votes) {                                                                    //On parcours la liste des votes des joueurs
-                        if (vote.getPlayerWhoVote() == playerWhoVote) {      //Si le joueur qui vote est le même que celui qui a fait la commande /vote
-                            if (!vote.haveVoted()){                                                                     //Si le joueur n'a pas déjà voté
-                                playerWhoVote.sendMessage("Votre vote a bien été pris en compte.");
-                                for (PlayerVoted playerVoted : playerVoteds){
-                                    if (playerVoted.getPlayerVoted().getName().compareToIgnoreCase(player.getName()) == 0){
-                                        vote.setPlayerVoted(player);
-                                        vote.setHaveVoted(true);
-                                        playerVoted.incrementNbVotes();
-                                    }
-                                }
-
-
-                            }else{
-                                playerWhoVote.sendMessage("Vous avez déjà voté quelqu'un !");
-                            }
-                        }
-                    }
+            for (int i = 0; i < meetingData.getGameData().getPlayerTeamArrayList().size(); i++){
+                if (meetingData.getGameData().getPlayerTeamArrayList().get(i).getPlayer().getName().compareToIgnoreCase(args[0]) == 0){
+                    //Joueur qui s'est pris le vote
+                    y = i;
                 }
+                if (meetingData.getGameData().getPlayerTeamArrayList().get(i).getPlayer() == playerWhoVote){
+                    //Joueur qui vote
+                    k = i;
+                }
+            }
+            ChatUtilities.broadcast("y = " + y);
+            ChatUtilities.broadcast("k = " + k);
+
+            if (y != -1){
+                if (!meetingData.getGameData().getPlayerTeamArrayList().get(k).isHasVoted()){ //Si le joueur qui effectue la commande n'a pas voté
+                    meetingData.getGameData().getPlayerTeamArrayList().get(k).setHasVoted(true);
+                    meetingData.getGameData().getPlayerTeamArrayList().get(y).incrementNbVotes();       //On incrémente le nb de votes du joueur voté
+                    meetingData.getGameData().getPlayerTeamArrayList().get(y).getPlayersThatVoted().add(meetingData.getGameData().getPlayerTeamArrayList().get(k)); //On ajoute le joueur qui a voté dans la liste des joueurs qui ont voté contre le joueur voté
+                    playerWhoVote.sendMessage("Votre vote à bien été pris en compte !");
+                }else{
+                    playerWhoVote.sendMessage("Vous avez déjà voté quelqu'un !");
+                }
+            }else{
+                playerWhoVote.sendMessage("Le joueur n'existe pas !");
             }
 
 
-
-            meetingData.setVotePlayers(votes);
-            meetingData.setPlayerVoteds(playerVoteds);
+            meetingData.addPlayerVotes(meetingData.getGameData().getPlayerTeamArrayList().get(y));
 
 
 

@@ -1,15 +1,20 @@
 package amonglegendminecraft.amonglegendminecraft.listeners;
 
+import amonglegendminecraft.amonglegendminecraft.AmongLegendMinecraft;
 import amonglegendminecraft.amonglegendminecraft.commands.MeetingCommand;
 import amonglegendminecraft.amonglegendminecraft.commands.StartCommand;
 import amonglegendminecraft.amonglegendminecraft.handlers.CrewmateTeam;
 import amonglegendminecraft.amonglegendminecraft.handlers.ImpostorTeam;
+import amonglegendminecraft.amonglegendminecraft.handlers.PlayerTeam;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
+import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
+import amonglegendminecraft.amonglegendminecraft.utils.SwordUtilities;
 import com.destroystokyo.paper.inventory.meta.ArmorStandMeta;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -30,6 +35,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
@@ -41,11 +47,22 @@ public class CommonListeners implements Listener {
 
     private ImpostorTeam impostors;
     private CrewmateTeam crewmates;
+    private boolean hasSwordOnce = false;
+
+
+    private ArrayList<PlayerTeam> playerTeamArrayList;
     private MeetingCommand meetingCommand;
     private boolean hasStarted;
 
     public boolean isHasStarted() {
         return hasStarted;
+    }
+    public ArrayList<PlayerTeam> getPlayerTeamArrayList() {
+        return playerTeamArrayList;
+    }
+
+    public void setPlayerTeamArrayList(ArrayList<PlayerTeam> playerTeamArrayList) {
+        this.playerTeamArrayList = playerTeamArrayList;
     }
 
     public void setHasStarted(boolean hasStarted) {
@@ -112,6 +129,13 @@ public class CommonListeners implements Listener {
 
             final Player p = event.getPlayer();
 
+            int y=-1;
+            int k=-1;
+
+
+
+
+
             Location deathLocation = p.getLocation();
             ItemStack skull = new ItemStack(Material.LEGACY_SKULL_ITEM,1,(short) 3);
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
@@ -125,12 +149,40 @@ public class CommonListeners implements Listener {
             meetingCommand.getArmorStands().add(armorStand);
 
 
+            for (int i = 0; i < crewmates.getPlayerArrayList().size(); i++){
+                if (crewmates.getPlayerArrayList().get(i).getPlayer() == p){
+                    y = i;
+                }
+            }
 
+            if (y == -1){
+                for (int i = 0; i < impostors.getPlayerArrayList().size(); i++){
+                    if (impostors.getPlayerArrayList().get(i).getPlayer() == p){
+                        k = i;
+                    }
+                }
+                impostors.removePlayer(impostors.getPlayerArrayList().get(k));
+            }else{
+                crewmates.removePlayer(crewmates.getPlayerArrayList().get(y));
+                if(p.getKiller() == impostors.getPlayerArrayList().get(k).getPlayer()){
+                    impostors.getPlayerArrayList().get(k).setCanKill(false);
+                    BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+                    int finalK = k;
+                    scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
+                    int cd = impostors.getPlayerArrayList().get(finalK).getCooldown();
+                        @Override
+                        public void run() {
 
-            if (impostors.isFromTeam(p)){           //Si le joueur est impostor
-                impostors.removePlayer(p);          //On retire le joueur de la team impostor
-            }else if (crewmates.isFromTeam(p)){     //Sinon
-                crewmates.removePlayer(p);          //On retire le joueur de la team crewmate
+                            if (cd == 0){
+                                impostors.getPlayerArrayList().get(finalK).setCanKill(true);
+                                SwordUtilities.giveImpostorSword(impostors.getPlayerArrayList().get(finalK).getPlayer());
+                                scheduler.cancelTasks(AmongLegendMinecraft.plugin);
+                            }
+
+                            cd--;
+                        }
+                    }, 0L,20L); //20 tick = 1 seconde
+                }
             }
 
             if (impostors.getPlayerArrayList().isEmpty()){                                          //S'il n'y a plus d'impostor (les crewmates ont win)
@@ -163,38 +215,62 @@ public class CommonListeners implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) throws Exception {
+        ChatUtilities.broadcast("etat hastarted : " + hasStarted);
         if (hasStarted){
             final Player player = event.getEntity().getKiller();        //On récupère le joueur qui a tué l'entité
-            ChatUtilities.broadcast("Une entity est mort");
-            if (event.getEntityType().getName().compareToIgnoreCase("Zombie") == 0){      //Si l'entity est un zombie
-                questEntity(player,"Zombie");                                       //On lance la méthode "questEntity"
-            }else if(event.getEntityType().getName().compareToIgnoreCase("Enderman") == 0){     //Si c'est un enderman
-                questEntity(player,"Enderman");                                           //On lance la méthode "questEntity"
+            for (int i = 0; i < playerTeamArrayList.size(); i++){
+                if (playerTeamArrayList.get(i).getPlayer() == player){
+                    if (event.getEntityType().getName().compareToIgnoreCase("Zombie") == 0){      //Si l'entity est un zombie
+                        if (!playerTeamArrayList.get(i).isQuestDone("Zombie")) {
+                            ChatUtilities.broadcast("Le joueur" + playerTeamArrayList.get(i).getPlayer().getName());
+                            questEntity(playerTeamArrayList.get(i), "Zombie");                                       //On lance la méthode "questEntity"
+                        }else{
+                                playerTeamArrayList.get(i).getPlayer().sendMessage("T'as déjà fait la quête");
+                        }
+                    }else if(event.getEntityType().getName().compareToIgnoreCase("Enderman") == 0){     //Si c'est un enderman
+                        if (!playerTeamArrayList.get(i).isQuestDone("Enderman")){
+                            questEntity(playerTeamArrayList.get(i),"Enderman");                  //On lance la méthode "questEntity"
+                        }else{
+                            playerTeamArrayList.get(i).getPlayer().sendMessage("T'as déjà fait la quête");
+                        }
+                    }
+
+                }
+
             }
+
         }
 
     }
 
 
-    public void questEntity(Player player, String nameEntity) throws Exception {
+
+
+    public void questEntity(PlayerTeam player, String nameEntity) throws Exception {
+
+        ChatUtilities.broadcast("Le joueur" + player.getPlayer().getName());
         if (hasStarted){
-            if (player.getScoreboard().getObjective("Quest").getScore(nameEntity).getScore() > 1){      //Si le score du joueur est supérieur à 1
-                player.getScoreboard().getObjective("Quest").getScore(nameEntity).setScore(player.getScoreboard().getObjective("Quest").getScore(nameEntity).getScore()-1); //On lui décrémente son nombre d'entité à tuer
-            }else{ //Sinon, le joueur à réussit la quête
-                if (crewmates.isFromTeam(player)){
-                    if (!crewmates.getQuestList(player).getQuest(nameEntity).isDone()){
-                        crewmates.getQuestList(player).getQuest(nameEntity).setDone(true);
-                        player.sendMessage("Vous avez terminé la quête "+nameEntity+" !");
-                        player.getScoreboard().getObjective("Quest").getScore(nameEntity).resetScore();
+            ChatUtilities.broadcast("On vérifie si le score > 1");
+            if (player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore() > 1){ //Si le score du joueur est supérieur à 1
+                //On lui décrémente son nombre d'entité à tuer
+                ChatUtilities.broadcast("On décrémente le score");
+                player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).setScore(player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore()-1); //On lui décrémente son nombre d'entité à tuer
+            }else{
+                if(!player.getQuestElement(nameEntity).isDone()){
+                    player.getQuestElement(nameEntity).setDone(true);
+                    player.setWallet(player.getWallet()+2);
+                    player.getPlayer().sendMessage("Vous avez terminé la quête "+nameEntity+" !");
+                    player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).resetScore();
+                    if (player.getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0 && player.allQuestDone()){
+                        player.setWallet(player.getWallet() + 10);
                     }
-                }else{
-                    if (!impostors.getQuestList(player).getQuest(nameEntity).isDone()){
-                        impostors.getQuestList(player).getQuest(nameEntity).setDone(true);
-                        player.sendMessage("Vous avez terminé la quête "+nameEntity+" !");
-                        player.getScoreboard().getObjective("Quest").getScore(nameEntity).resetScore();
+                    if (!hasSwordOnce && player.nbQuestDone() == 2){
+                        SwordUtilities.giveImpostorSword(player.getPlayer());
+                        hasSwordOnce = true;
                     }
                 }
             }
+
         }
     }
 
@@ -203,18 +279,21 @@ public class CommonListeners implements Listener {
         if (hasStarted){
             final Player player = event.getPlayer();
 
-            if (crewmates.isFromTeam(player)){
-                    ChatUtilities.broadcast("toutes les quêtes finito? " + crewmates.allQuestDone());
-                if (crewmates.allQuestDone()){
-                    ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
-                    for(Player p : playersArray){
-                        p.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + crewmates.getPlayerArrayList().size()+ " crewmates");
+            for (int i = 0; i < playerTeamArrayList.size(); i++) {
+                if (playerTeamArrayList.get(i).getPlayer() == player) {
+                    if (playerTeamArrayList.get(i).getTeam().getTeamName().compareToIgnoreCase("Crewmates") == 0) {
+                        if (crewmates.allPlayerQuestDone()) {
+                            ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+                            for (Player p : playersArray) {
+                                p.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + crewmates.getPlayerArrayList().size() + " crewmates");
+                            }
+                            crewmates.emptyTeam();
+                            impostors.emptyTeam();
+                        }
                     }
-                    crewmates.emptyTeam();
-                    impostors.emptyTeam();
-
                 }
             }
+
         }
     }
 
