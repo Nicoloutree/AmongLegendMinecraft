@@ -162,6 +162,7 @@ public class MeetingCommand implements CommandExecutor {
 
                             for (int i = 0; i < playersArray.size(); i++){
                                 playersArray.get(i).teleport(locations.get(i));
+                                playersArray.get(i).setGameMode(GameMode.SURVIVAL);
                             }
 
                             LocationUtilities.removePlatform(meetingLocation,10,10);
