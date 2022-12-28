@@ -76,6 +76,16 @@ public class LocationUtilities {
                 location.set(x+i,y,z+k).getBlock().setType(base);
             }
         }
+
+        //Construction des murs
+        for(double i = 1;i<=tailleWall;i++){
+            for(double j=0;j<tailleBase;j++){
+                location.set(x+j,y+i,z).getBlock().setType(wall);
+                location.set(x+j,y+i,z+tailleBase).getBlock().setType(wall);
+                location.set(x,y+i,z+j).getBlock().setType(wall);
+                location.set(x+tailleBase,y+i,z+j).getBlock().setType(wall);
+            }
+        }
         location.set(x,y,z);
     }
 

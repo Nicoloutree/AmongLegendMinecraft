@@ -5,10 +5,7 @@ import amonglegendminecraft.amonglegendminecraft.handlers.PlayerTeam;
 
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -115,6 +112,7 @@ public class MeetingCommand implements CommandExecutor {
 
                 for (int i = 0; i < playersArray.size(); i++){
                     locations.add(playersArray.get(i).getLocation());
+                    playersArray.get(i).setGameMode(GameMode.ADVENTURE);
                 }
 
                 LocationUtilities.teleportAllPlayersToLocationForMeeting(playersArray, meetingLocation, taillebase);
@@ -164,6 +162,7 @@ public class MeetingCommand implements CommandExecutor {
 
                             for (int i = 0; i < playersArray.size(); i++){
                                 playersArray.get(i).teleport(locations.get(i));
+                                playersArray.get(i).setGameMode(GameMode.SURVIVAL);
                             }
 
                             LocationUtilities.removePlatform(meetingLocation,10,10);
