@@ -1,8 +1,13 @@
 package amonglegendminecraft.amonglegendminecraft.commands;
 
+import amonglegendminecraft.amonglegendminecraft.AmongLegendMinecraft;
 import amonglegendminecraft.amonglegendminecraft.handlers.PlayerTeam;
 import amonglegendminecraft.amonglegendminecraft.handlers.Sabotage;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
+import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
+import amonglegendminecraft.amonglegendminecraft.utils.SwordUtilities;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,11 +15,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
+
+import static org.bukkit.ChatColor.RED;
 
 public class SabotageCommand implements CommandExecutor {
 
@@ -76,6 +85,45 @@ public class SabotageCommand implements CommandExecutor {
                     }else{
                         Sabotage.afficheSabotage(ralentissement,gameData.getImpostors().getPlayerArrayList().get(k));
                     }
+                }else if (args[0].compareToIgnoreCase("Octogone") == 0){
+                    Sabotage octogone = gameData.getImpostors().getSabotageElementFromName("Octogone");
+
+                    if(gameData.getImpostors().getPlayerArrayList().get(k).getWallet() >= octogone.getPrice()){
+                        gameData.getImpostors().getPlayerArrayList().get(k).setWallet(gameData.getImpostors().getPlayerArrayList().get(k).getWallet() - octogone.getPrice());
+                        ArrayList<PlayerTeam> temp = gameData.getCrewmates().getPlayerArrayList();
+                        Collections.shuffle(temp);
+                        Location location =  new Location(temp.get(0).getPlayer().getWorld(), 50, 150,50);
+                        ArrayList<Location> stockLoc = new ArrayList<>();
+                        LocationUtilities.createPlatform(location,20,20,Material.COBBLESTONE,Material.COBBLESTONE);
+                        stockLoc.add(gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().getLocation());
+                        stockLoc.add(temp.get(0).getPlayer().getLocation());
+                        LocationUtilities.teleportDuoToLocation(gameData.getImpostors().getPlayerArrayList().get(k).getPlayer(), temp.get(0).getPlayer(), location);
+                        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+                        gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendTitle(RED +"Octogone", "Vous avez 15 secondes");
+                        temp.get(0).getPlayer().sendTitle(RED + "Octogone", "Survivez pendant 15 secondes");
+                        int finalK = k;
+                        scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
+                        int duree = 15;
+
+                            @Override
+                            public void run() {
+
+                                if (duree == 0){
+                                    gameData.getImpostors().getPlayerArrayList().get(finalK).getPlayer().teleport(stockLoc.get(0));
+                                    temp.get(0).getPlayer().teleport(stockLoc.get(1));
+                                    gameData.getImpostors().getPlayerArrayList().get(finalK).getPlayer().sendTitle(RED +"Temps écoulé", "L'octogone est terminé !");
+                                    temp.get(0).getPlayer().sendTitle(RED +"Temps écoulé", "L'octogone est terminé !");
+                                    temp.clear();
+                                    stockLoc.clear();
+                                    scheduler.cancelTasks(AmongLegendMinecraft.plugin);
+                                }
+
+                                duree--;
+                            }
+                        }, 0L,20L); //20 tick = 1 seconde
+
+                    }
+
                 }
             }else{
                 player.sendMessage("Liste des sabotages : (commande /sabotage nameSabotage)");

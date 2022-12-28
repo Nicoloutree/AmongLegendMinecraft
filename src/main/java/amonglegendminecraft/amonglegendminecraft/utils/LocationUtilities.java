@@ -53,6 +53,11 @@ public class LocationUtilities {
         }
     }
 
+    public static void teleportDuoToLocation(Player player1, Player player2, Location location){
+        player1.teleport(location);
+        player2.teleport(location);
+    }
+
     private static int randomNum(Integer lownum, Integer highnum) {
         Random rand = new Random();
         return lownum + (int) (rand.nextDouble() * ((highnum - lownum) + 1));
