@@ -37,27 +37,27 @@ public class createScoreboard {
             scorename = objective.getScore(quests.get(i).getQuestName());   //On ajoute la quête au score
             scorename.setScore(quests.get(i).getCompteur());                                  //On set le score au compteur (étape obligatoire sinon elle s'affiche pas, merci bukkit)
         }
-        scorename = objective.getScore(GRAY+"----------------");
-        scorename.setScore(0);
+
     }
 
     public static void playerInfos(PlayerTeam player){
         Score scorename;
-        scorename = objective.getScore(GRAY+"----------------");
-        scorename.setScore(0);
+
         scorename = objective.getScore(player.getPlayer().getName());
-        scorename.setScore(0);
+        scorename.setScore(110);
         if (player.getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
             scorename = objective.getScore(RED + player.getTeam().getTeamName());
-            scorename.setScore(0);
+            scorename.setScore(109);
         }else{
             scorename = objective.getScore(BLUE+ player.getTeam().getTeamName());
-            scorename.setScore(0);
+            scorename.setScore(108);
         }
-        scorename = objective.getScore("Portefeuille");
-        scorename.setScore(player.getWallet());
+        scorename = objective.getScore("Portefeuille       | " + player.getWallet()+" |");
+        scorename.setScore(107);
         scorename = objective.getScore(GRAY+"----------------");
-        scorename.setScore(0);
+        scorename.setScore(106);
+        scorename = objective.getScore("                ");
+        scorename.setScore(105);
     }
 
 

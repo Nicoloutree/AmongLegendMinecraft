@@ -33,6 +33,7 @@ public final class AmongLegendMinecraft extends JavaPlugin {
         voteCommand.setMeetingData(meetingCommand);
         getCommand("vote").setExecutor(voteCommand);
 
+        sabotageCommand.setMeetingCommand(meetingCommand);
         sabotageCommand.setGameData(startCommand);
         getCommand("sabotage").setExecutor(sabotageCommand);
     }

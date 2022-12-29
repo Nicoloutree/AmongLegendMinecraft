@@ -2,6 +2,7 @@ package amonglegendminecraft.amonglegendminecraft.handlers;
 
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Score;
 
 import java.util.ArrayList;
 
@@ -40,8 +41,12 @@ public class PlayerTeam {
     }
 
     public void setWallet(int wallet) {
+        Score scoreWallet;
+        player.getPlayer().getScoreboard().getObjective("Quest").getScore("Portefeuille       | " + this.wallet+" |").resetScore();
         this.wallet = wallet;
-        player.getPlayer().getScoreboard().getObjective("Quest").getScore("Portefeuille").setScore(wallet);
+        scoreWallet = player.getPlayer().getScoreboard().getObjective("Quest").getScore("Portefeuille       | " + wallet + " |");
+        scoreWallet.setScore(107);
+
     }
 
     public ArrayList<PlayerTeam> getPlayersThatVoted() {

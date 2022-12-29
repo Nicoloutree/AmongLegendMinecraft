@@ -9,6 +9,7 @@ amonglegendminecraft\amonglegendminecraft\commands\MeetingCommand$1.class
 amonglegendminecraft\amonglegendminecraft\handlers\ImpostorTeam.class
 amonglegendminecraft\amonglegendminecraft\listeners\InventoryCheck.class
 amonglegendminecraft\amonglegendminecraft\utils\SwordUtilities.class
+amonglegendminecraft\amonglegendminecraft\commands\SabotageCommand$1.class
 amonglegendminecraft\amonglegendminecraft\handlers\PlayerTeam.class
 amonglegendminecraft\amonglegendminecraft\handlers\Quest.class
 amonglegendminecraft\amonglegendminecraft\handlers\TimeEvent$1.class

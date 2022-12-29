@@ -28,6 +28,15 @@ import static org.bukkit.ChatColor.RED;
 public class SabotageCommand implements CommandExecutor {
 
     private StartCommand gameData;
+    private MeetingCommand meetingCommand;
+
+    public MeetingCommand getMeetingCommand() {
+        return meetingCommand;
+    }
+
+    public void setMeetingCommand(MeetingCommand meetingCommand) {
+        this.meetingCommand = meetingCommand;
+    }
 
     public StartCommand getGameData() {
         return gameData;
@@ -65,7 +74,9 @@ public class SabotageCommand implements CommandExecutor {
                                 gameData.getCrewmates().getPlayerArrayList(),gameData.getImpostors().getPlayerArrayList().get(k), light.getPrice());
 
                     }else{
+                        int res = gameData.getImpostors().getPlayerArrayList().get(k).getWallet()- light.getPrice();
                         Sabotage.afficheSabotage(light,gameData.getImpostors().getPlayerArrayList().get(k));
+                        gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendMessage("T'as pas assez d'argent, il te manque "+res);
                     }
                 }else if (args[0].compareToIgnoreCase("Mining") == 0) {
                     Sabotage mining = gameData.getImpostors().getSabotageElementFromName("Mining");
@@ -74,7 +85,9 @@ public class SabotageCommand implements CommandExecutor {
                                 gameData.getCrewmates().getPlayerArrayList(),gameData.getImpostors().getPlayerArrayList().get(k), mining.getPrice());
 
                     }else{
+                        int res = gameData.getImpostors().getPlayerArrayList().get(k).getWallet()- mining.getPrice();
                         Sabotage.afficheSabotage(mining,gameData.getImpostors().getPlayerArrayList().get(k));
+                        gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendMessage("T'as pas assez d'argent, il te manque "+res);
                     }
                 }else if (args[0].compareToIgnoreCase("Ralentissement") == 0) {
                     Sabotage ralentissement = gameData.getImpostors().getSabotageElementFromName("Ralentissement");
@@ -83,45 +96,58 @@ public class SabotageCommand implements CommandExecutor {
                         effectTransaction(new PotionEffect(PotionEffectType.SLOW_DIGGING, 10 * 20, 10, false, false),
                                 gameData.getCrewmates().getPlayerArrayList(),gameData.getImpostors().getPlayerArrayList().get(k), ralentissement.getPrice());
                     }else{
+                        int res = gameData.getImpostors().getPlayerArrayList().get(k).getWallet()- ralentissement.getPrice();
                         Sabotage.afficheSabotage(ralentissement,gameData.getImpostors().getPlayerArrayList().get(k));
+                        gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendMessage("T'as pas assez d'argent, il te manque "+res);
                     }
                 }else if (args[0].compareToIgnoreCase("Octogone") == 0){
                     Sabotage octogone = gameData.getImpostors().getSabotageElementFromName("Octogone");
 
                     if(gameData.getImpostors().getPlayerArrayList().get(k).getWallet() >= octogone.getPrice()){
-                        gameData.getImpostors().getPlayerArrayList().get(k).setWallet(gameData.getImpostors().getPlayerArrayList().get(k).getWallet() - octogone.getPrice());
-                        ArrayList<PlayerTeam> temp = gameData.getCrewmates().getPlayerArrayList();
-                        Collections.shuffle(temp);
-                        Location location =  new Location(temp.get(0).getPlayer().getWorld(), 50, 150,50);
-                        ArrayList<Location> stockLoc = new ArrayList<>();
-                        LocationUtilities.createPlatform(location,20,20,Material.COBBLESTONE,Material.COBBLESTONE);
-                        stockLoc.add(gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().getLocation());
-                        stockLoc.add(temp.get(0).getPlayer().getLocation());
-                        LocationUtilities.teleportDuoToLocation(gameData.getImpostors().getPlayerArrayList().get(k).getPlayer(), temp.get(0).getPlayer(), location);
-                        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-                        gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendTitle(RED +"Octogone", "Vous avez 15 secondes");
-                        temp.get(0).getPlayer().sendTitle(RED + "Octogone", "Survivez pendant 15 secondes");
-                        int finalK = k;
-                        scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
-                        int duree = 15;
+                        if (!meetingCommand.isMeetingActivate()){
+                            gameData.getImpostors().getPlayerArrayList().get(k).setWallet(gameData.getImpostors().getPlayerArrayList().get(k).getWallet() - octogone.getPrice());
+                            ArrayList<PlayerTeam> temp = gameData.getCrewmates().getPlayerArrayList();
+                            Collections.shuffle(temp);
+                            Location location =  new Location(temp.get(0).getPlayer().getWorld(), 50, 150,50);
+                            ArrayList<Location> stockLoc = new ArrayList<>();
+                            LocationUtilities.createPlatform(location,20,20,Material.COBBLESTONE,Material.COBBLESTONE);
+                            stockLoc.add(gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().getLocation());
+                            stockLoc.add(temp.get(0).getPlayer().getLocation());
+                            LocationUtilities.teleportDuoToOctogone(gameData.getImpostors().getPlayerArrayList().get(k).getPlayer(), temp.get(0).getPlayer(), location,20);
+                            BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+                            gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendTitle(RED +"Octogone", "Vous avez 15 secondes");
+                            temp.get(0).getPlayer().sendTitle(RED + "Octogone", "Survivez pendant 15 secondes");
+                            int finalK = k;
+                            scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
+                            int duree = 15;
 
-                            @Override
-                            public void run() {
+                                @Override
+                                public void run() {
 
-                                if (duree == 0){
-                                    gameData.getImpostors().getPlayerArrayList().get(finalK).getPlayer().teleport(stockLoc.get(0));
-                                    temp.get(0).getPlayer().teleport(stockLoc.get(1));
-                                    gameData.getImpostors().getPlayerArrayList().get(finalK).getPlayer().sendTitle(RED +"Temps écoulé", "L'octogone est terminé !");
-                                    temp.get(0).getPlayer().sendTitle(RED +"Temps écoulé", "L'octogone est terminé !");
-                                    temp.clear();
-                                    stockLoc.clear();
-                                    scheduler.cancelTasks(AmongLegendMinecraft.plugin);
+                                    if (duree == 0){
+                                        if (!meetingCommand.isMeetingActivate()){
+                                            gameData.getImpostors().getPlayerArrayList().get(finalK).getPlayer().teleport(stockLoc.get(0));
+                                            temp.get(0).getPlayer().teleport(stockLoc.get(1));
+                                        }
+                                        gameData.getImpostors().getPlayerArrayList().get(finalK).getPlayer().sendTitle(RED +"Temps écoulé", "L'octogone est terminé !");
+                                        temp.get(0).getPlayer().sendTitle(RED +"Temps écoulé", "L'octogone est terminé !");
+                                        temp.clear();
+                                        stockLoc.clear();
+                                        scheduler.cancelTasks(AmongLegendMinecraft.plugin);
+                                    }
+
+                                    duree--;
                                 }
+                            }, 0L,20L); //20 tick = 1 seconde
+                            LocationUtilities.removePlatform(location,20,20);
 
-                                duree--;
-                            }
-                        }, 0L,20L); //20 tick = 1 seconde
-
+                        }else{
+                            gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendMessage("Vous ne pouvez pas faire d'octogone pendant un meeting !");
+                        }
+                    }else{
+                        int res = gameData.getImpostors().getPlayerArrayList().get(k).getWallet()- octogone.getPrice();
+                        Sabotage.afficheSabotage(octogone,gameData.getImpostors().getPlayerArrayList().get(k));
+                        gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendMessage("T'as pas assez d'argent, il te manque "+res);
                     }
 
                 }
