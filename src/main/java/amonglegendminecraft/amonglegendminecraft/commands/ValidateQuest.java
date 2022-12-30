@@ -50,7 +50,7 @@ public class ValidateQuest implements CommandExecutor {
 
                 ChatUtilities.broadcast("size de getPlayerTeamArrayList : " + gameData.getPlayerTeamArrayList().size());
 
-                for (int i = 0; i < gameData.getPlayerTeamArrayList().size(); i++){
+                for (int i = 0; i < gameData.getPlayerTeamArrayList().size(); i++){ //joueur qui a fait la commande
                     if (gameData.getPlayerTeamArrayList().get(i).getPlayer() == player){
                         k = i;
                     }
@@ -61,32 +61,24 @@ public class ValidateQuest implements CommandExecutor {
                 ChatUtilities.broadcast("Joueur : " + gameData.getPlayerTeamArrayList().get(k).getPlayer().getName());
                 ChatUtilities.broadcast("nbQuest : " + gameData.getPlayerTeamArrayList().get(k).getNbQuests());
 
-
-                if (args[0].compareToIgnoreCase("bois") == 0) {
-                    try {
-                        questMaterial(gameData.getPlayerTeamArrayList().get(k),Material.OAK_LOG,"Bois");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }else if (args[0].compareToIgnoreCase("Cobblestone") == 0) {
-                    try {
-                        questMaterial(gameData.getPlayerTeamArrayList().get(k),Material.COBBLESTONE,"Cobblestone");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }else if (args[0].compareToIgnoreCase("zombie") == 0){
-                    try {
-                        questMobKills(gameData.getPlayerTeamArrayList().get(k), "Zombie");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }else if (args[0].compareToIgnoreCase("enderman") == 0){
-                    try {
-                        questMobKills(gameData.getPlayerTeamArrayList().get(k), "enderman");
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                for (int i = 0; i < gameData.getPlayerTeamArrayList().get(k).getQuests().size(); i++){
+                    if (args[0].compareToIgnoreCase(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName()) == 0){
+                        if (gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("collect") == 0){
+                            try {
+                                questMaterial(gameData.getPlayerTeamArrayList().get(k),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getMaterial(),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else if(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("entity") == 0){
+                            try {
+                                questMobKills(gameData.getPlayerTeamArrayList().get(k),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
+
 
                 if (gameData.getPlayerTeamArrayList().get(k).getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
                     if (!hasSwordOnce && gameData.getPlayerTeamArrayList().get(k).nbQuestDone() == 2 && !CommonListeners.isHasSwordOnce()){
