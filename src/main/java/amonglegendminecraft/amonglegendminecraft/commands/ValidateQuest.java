@@ -25,6 +25,24 @@ import static org.bukkit.ChatColor.BLUE;
 public class ValidateQuest implements CommandExecutor {
 
     private StartCommand gameData;
+    private static boolean senderValidate = false;
+    private static PlayerTeam playerValidate;
+
+    public static boolean isSenderValidate() {
+        return senderValidate;
+    }
+
+    public static void setSenderValidate(boolean senderValidate) {
+        ValidateQuest.senderValidate = senderValidate;
+    }
+
+    public static PlayerTeam getPlayerValidate() {
+        return playerValidate;
+    }
+
+    public static void setPlayerValidate(PlayerTeam playerValidate) {
+        ValidateQuest.playerValidate = playerValidate;
+    }
 
     public StartCommand getGameData() {
         return gameData;
@@ -33,91 +51,118 @@ public class ValidateQuest implements CommandExecutor {
     public void setGameData(StartCommand gameData) {
         this.gameData = gameData;
     }
-    private boolean hasSwordOnce = false;
+
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player)) {
-            return true;
+            senderValidate = true;
         }
 
         if (command.getName().equalsIgnoreCase("quest")) {
 
-            Player player = ((Player) sender).getPlayer();
-            if (args.length > 0){
+            if (!senderValidate){
 
-                int k = 0;
+                Player player = ((Player) sender).getPlayer();
+                if (args.length > 0){
 
-                ChatUtilities.broadcast("size de getPlayerTeamArrayList : " + gameData.getPlayerTeamArrayList().size());
+                    int k = 0;
 
-                for (int i = 0; i < gameData.getPlayerTeamArrayList().size(); i++){ //joueur qui a fait la commande
-                    if (gameData.getPlayerTeamArrayList().get(i).getPlayer() == player){
-                        k = i;
+                    ChatUtilities.broadcast("size de getPlayerTeamArrayList : " + gameData.getPlayerTeamArrayList().size());
+
+                    for (int i = 0; i < gameData.getPlayerTeamArrayList().size(); i++){ //joueur qui a fait la commande
+                        if (gameData.getPlayerTeamArrayList().get(i).getPlayer() == player){
+                            k = i;
+                        }
                     }
-                }
 
-                ChatUtilities.broadcast("Joueur qui fait la commande /quest");
-                ChatUtilities.broadcast("Team du joueur : " + gameData.getPlayerTeamArrayList().get(k).getTeam().getTeamName());
-                ChatUtilities.broadcast("Joueur : " + gameData.getPlayerTeamArrayList().get(k).getPlayer().getName());
-                ChatUtilities.broadcast("nbQuest : " + gameData.getPlayerTeamArrayList().get(k).getNbQuests());
+                    ChatUtilities.broadcast("Joueur qui fait la commande /quest");
+                    ChatUtilities.broadcast("Team du joueur : " + gameData.getPlayerTeamArrayList().get(k).getTeam().getTeamName());
+                    ChatUtilities.broadcast("Joueur : " + gameData.getPlayerTeamArrayList().get(k).getPlayer().getName());
+                    ChatUtilities.broadcast("nbQuest : " + gameData.getPlayerTeamArrayList().get(k).getNbQuests());
 
-                for (int i = 0; i < gameData.getPlayerTeamArrayList().get(k).getQuests().size(); i++){
-                    if (args[0].compareToIgnoreCase(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName()) == 0){
-                        if (gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("collect") == 0){
-                            try {
-                                questMaterial(gameData.getPlayerTeamArrayList().get(k),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getMaterial(),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }else if(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("entity") == 0){
-                            try {
-                                questMobKills(gameData.getPlayerTeamArrayList().get(k),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                    for (int i = 0; i < gameData.getPlayerTeamArrayList().get(k).getQuests().size(); i++){
+                        if (args[0].compareToIgnoreCase(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName()) == 0){
+                            if (gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("collect") == 0){
+                                try {
+                                    questMaterial(gameData.getPlayerTeamArrayList().get(k),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getMaterial(),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else if(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("entity") == 0){
+                                try {
+                                    questMobKills(gameData.getPlayerTeamArrayList().get(k),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
-                }
 
 
-                if (gameData.getPlayerTeamArrayList().get(k).getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
-                    if (!hasSwordOnce && gameData.getPlayerTeamArrayList().get(k).nbQuestDone() == 2 && !CommonListeners.isHasSwordOnce()){
-                        SwordUtilities.giveImpostorSword(gameData.getPlayerTeamArrayList().get(k).getPlayer());
-                        SwordUtilities.giveCompass(gameData.getPlayerTeamArrayList().get(k).getPlayer());
-                        CommonListeners.setHasSwordOnce(true);
-                        hasSwordOnce = true;
-                    }else if (gameData.getPlayerTeamArrayList().get(k).allQuestDone()) {
-                        gameData.getPlayerTeamArrayList().get(k).setWallet(gameData.getPlayerTeamArrayList().get(k).getWallet() + 10);
+                    if (gameData.getPlayerTeamArrayList().get(k).getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
+                        if (gameData.getPlayerTeamArrayList().get(k).nbQuestDone() == 2){
+                            SwordUtilities.giveImpostorSword(gameData.getPlayerTeamArrayList().get(k).getPlayer());
+                            SwordUtilities.giveCompass(gameData.getPlayerTeamArrayList().get(k).getPlayer());
+                        }else if (gameData.getPlayerTeamArrayList().get(k).allQuestDone()) {
+                            gameData.getPlayerTeamArrayList().get(k).setWallet(gameData.getPlayerTeamArrayList().get(k).getWallet() + 10);
+                        }
+
                     }
 
-                }
+                    /*
+                    if (gameData.getCrewmates().allPlayerQuestDone()){
 
-                /*
-                if (gameData.getCrewmates().allPlayerQuestDone()){
+                        ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+                        for(Player p : playersArray){
+                            p.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + gameData.getCrewmates().getPlayerArrayList().size()+ " crewmates");
+                        }
+                        gameData.getCrewmates().emptyTeam();
+                        gameData.getImpostors().emptyTeam();
+                        gameData.setGameStarted(false);
+                    }*/
 
-                    ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
-                    for(Player p : playersArray){
-                        p.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + gameData.getCrewmates().getPlayerArrayList().size()+ " crewmates");
+                }else{
+                    int y = 0;
+                    for (int i = 0; i < gameData.getPlayerTeamArrayList().size(); i++){
+                        if (gameData.getPlayerTeamArrayList().get(i).getPlayer() == player){
+                            y = i;
+                        }
                     }
-                    gameData.getCrewmates().emptyTeam();
-                    gameData.getImpostors().emptyTeam();
-                    gameData.setGameStarted(false);
-                }*/
+
+                    player.sendMessage("Liste des quests : (commande /quest nameQuest)");
+                    for (int i = 0; i < gameData.getPlayerTeamArrayList().get(y).getQuests().size(); i++){
+                        player.sendMessage("   - " + gameData.getPlayerTeamArrayList().get(y).getQuests().get(i).getQuestName());
+                    }
+                }
 
             }else{
-                int y = 0;
-                for (int i = 0; i < gameData.getPlayerTeamArrayList().size(); i++){
-                    if (gameData.getPlayerTeamArrayList().get(i).getPlayer() == player){
-                        y = i;
+
+                try {
+                    questMobKills(playerValidate, args[0]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                ChatUtilities.broadcast("Joueur qu'on check : " + playerValidate.getPlayer().getName());
+                ChatUtilities.broadcast("Team : " + playerValidate.getTeam().getTeamName());
+                ChatUtilities.broadcast("nbQuest done : " + playerValidate.nbQuestDone());
+
+                if (playerValidate.getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
+                    ChatUtilities.broadcast("1");
+                    if (playerValidate.getNbQuests() == 2){
+                        ChatUtilities.broadcast("2");
+                        SwordUtilities.giveImpostorSword(playerValidate.getPlayer());
+                        SwordUtilities.giveCompass(playerValidate.getPlayer());
+                    }else if (playerValidate.allQuestDone()) {
+                        ChatUtilities.broadcast("3");
+                        playerValidate.setWallet(playerValidate.getWallet() + 10);
                     }
-                }
 
-                player.sendMessage("Liste des quests : (commande /quest nameQuest)");
-                for (int i = 0; i < gameData.getPlayerTeamArrayList().get(y).getQuests().size(); i++){
-                    player.sendMessage("   - " + gameData.getPlayerTeamArrayList().get(y).getQuests().get(i).getQuestName());
                 }
+                playerValidate = null;
+                senderValidate = false;
             }
-
 
         }
 
@@ -125,6 +170,21 @@ public class ValidateQuest implements CommandExecutor {
         return true;
     }
 
+  public void questMobKills(PlayerTeam player, String mobName) throws Exception {
+      if (!player.isQuestDone(mobName)){
+          if (senderValidate){
+              player.getQuestElement(mobName).setDone(true);
+              player.setWallet(player.getWallet()+2);
+              player.getPlayer().sendMessage("Vous avez terminé la quête "+mobName+" !");
+              player.getPlayer().getScoreboard().getObjective("Quest").getScore(mobName).resetScore();
+          }else{
+              player.getPlayer().sendMessage("Quête : " + mobName);
+              player.getPlayer().sendMessage("Description : " + player.getQuestElement(mobName).getQuestDescription());
+          }
+      }else{
+          player.getPlayer().sendMessage("T'as déjà fait la quête bouffon !");
+      }
+  }
 
     public boolean materialQuestIsValidate(Player player, Material material, int amount) {
         return player.getInventory().contains(material, amount);
@@ -164,14 +224,6 @@ public class ValidateQuest implements CommandExecutor {
 
 
 
-  public void questMobKills(PlayerTeam player, String mobName) throws Exception {
-      if (!player.isQuestDone(mobName)){
-          player.getPlayer().sendMessage("Quête : " + mobName);
-          player.getPlayer().sendMessage("Description : " + player.getQuestElement(mobName).getQuestDescription());
-      }else{
-          player.getPlayer().sendMessage("T'as déjà fait la quête bouffon !");
-      }
-  }
 
 
 

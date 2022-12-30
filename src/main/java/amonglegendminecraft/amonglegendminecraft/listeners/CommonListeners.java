@@ -3,6 +3,7 @@ package amonglegendminecraft.amonglegendminecraft.listeners;
 import amonglegendminecraft.amonglegendminecraft.AmongLegendMinecraft;
 import amonglegendminecraft.amonglegendminecraft.commands.MeetingCommand;
 import amonglegendminecraft.amonglegendminecraft.commands.StartCommand;
+import amonglegendminecraft.amonglegendminecraft.commands.ValidateQuest;
 import amonglegendminecraft.amonglegendminecraft.handlers.CrewmateTeam;
 import amonglegendminecraft.amonglegendminecraft.handlers.ImpostorTeam;
 import amonglegendminecraft.amonglegendminecraft.handlers.PlayerTeam;
@@ -49,15 +50,6 @@ public class CommonListeners implements Listener {
 
     private ImpostorTeam impostors;
     private CrewmateTeam crewmates;
-    private static boolean hasSwordOnce = false;
-
-    public static boolean isHasSwordOnce() {
-        return hasSwordOnce;
-    }
-
-    public static void setHasSwordOnce(boolean hasSwordOnce) {
-        CommonListeners.hasSwordOnce = hasSwordOnce;
-    }
 
     private ArrayList<PlayerTeam> playerTeamArrayList;
     private MeetingCommand meetingCommand;
@@ -309,17 +301,9 @@ public class CommonListeners implements Listener {
                 player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).setScore(player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore()-1); //On lui décrémente son nombre d'entité à tuer
             }else{
                 if(!player.getQuestElement(nameEntity).isDone()){
-                    player.getQuestElement(nameEntity).setDone(true);
-                    player.setWallet(player.getWallet()+2);
-                    player.getPlayer().sendMessage("Vous avez terminé la quête "+nameEntity+" !");
-                    player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).resetScore();
-                    if (player.getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0 && player.allQuestDone()){
-                        player.setWallet(player.getWallet() + 10);
-                    }
-                    if (!hasSwordOnce && player.nbQuestDone() == 2){
-                        SwordUtilities.giveImpostorSword(player.getPlayer());
-                        hasSwordOnce = true;
-                    }
+                    ValidateQuest.setSenderValidate(true);
+                    ValidateQuest.setPlayerValidate(player);
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),"quest "+nameEntity);
                 }
             }
 
