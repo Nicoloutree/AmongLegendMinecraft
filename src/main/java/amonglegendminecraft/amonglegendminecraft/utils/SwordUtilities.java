@@ -13,6 +13,18 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class SwordUtilities {
 
     private static final ItemStack sword = generateImpostorSword();
+    private static final ItemStack compass = generateCompass();
+
+    public static ItemStack getCompass() {
+        return compass;
+    }
+
+
+    public static void giveCompass(Player player){
+        Inventory inv = player.getInventory();
+        player.sendMessage("Vous avez reçu votre compass");
+        inv.addItem(compass);
+    }
 
     public static void giveImpostorSword(Player player){
         Inventory inv = player.getInventory();
@@ -27,6 +39,15 @@ public class SwordUtilities {
         metaSword.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE,new AttributeModifier("generic.attackDamage", 10, AttributeModifier.Operation.ADD_NUMBER));
         sword.setItemMeta(metaSword);
         return sword;
+    }
+
+    private static ItemStack generateCompass(){
+        ItemStack compass = new ItemStack(Material.COMPASS, 1);
+        ItemMeta metaCompass = compass.getItemMeta();
+        metaCompass.setDisplayName("Trackeur");
+        metaCompass.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier("generic.luck",10,AttributeModifier.Operation.ADD_NUMBER));
+        compass.setItemMeta(metaCompass);
+        return compass;
     }
 
     public static void removeImpostorSword(Player player){

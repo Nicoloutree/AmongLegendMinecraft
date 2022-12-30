@@ -3,6 +3,7 @@ package amonglegendminecraft.amonglegendminecraft.commands;
 import amonglegendminecraft.amonglegendminecraft.AmongLegendMinecraft;
 import amonglegendminecraft.amonglegendminecraft.handlers.PlayerTeam;
 import amonglegendminecraft.amonglegendminecraft.handlers.Quest;
+import amonglegendminecraft.amonglegendminecraft.listeners.CommonListeners;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.SwordUtilities;
 import org.bukkit.Bukkit;
@@ -88,8 +89,10 @@ public class ValidateQuest implements CommandExecutor {
                 }
 
                 if (gameData.getPlayerTeamArrayList().get(k).getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
-                    if (!hasSwordOnce && gameData.getPlayerTeamArrayList().get(k).nbQuestDone() == 2){
+                    if (!hasSwordOnce && gameData.getPlayerTeamArrayList().get(k).nbQuestDone() == 2 && !CommonListeners.isHasSwordOnce()){
                         SwordUtilities.giveImpostorSword(gameData.getPlayerTeamArrayList().get(k).getPlayer());
+                        SwordUtilities.giveCompass(gameData.getPlayerTeamArrayList().get(k).getPlayer());
+                        CommonListeners.setHasSwordOnce(true);
                         hasSwordOnce = true;
                     }else if (gameData.getPlayerTeamArrayList().get(k).allQuestDone()) {
                         gameData.getPlayerTeamArrayList().get(k).setWallet(gameData.getPlayerTeamArrayList().get(k).getWallet() + 10);

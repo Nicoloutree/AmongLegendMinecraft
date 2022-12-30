@@ -125,6 +125,7 @@ public class SabotageCommand implements CommandExecutor {
                                 public void run() {
 
                                     if (duree == 0){
+                                        LocationUtilities.removePlatform(location,20,20);
                                         if (!meetingCommand.isMeetingActivate()){
                                             gameData.getImpostors().getPlayerArrayList().get(finalK).getPlayer().teleport(stockLoc.get(0));
                                             temp.get(0).getPlayer().teleport(stockLoc.get(1));
@@ -139,7 +140,6 @@ public class SabotageCommand implements CommandExecutor {
                                     duree--;
                                 }
                             }, 0L,20L); //20 tick = 1 seconde
-                            LocationUtilities.removePlatform(location,20,20);
 
                         }else{
                             gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendMessage("Vous ne pouvez pas faire d'octogone pendant un meeting !");

@@ -21,6 +21,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -28,6 +29,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -47,8 +49,15 @@ public class CommonListeners implements Listener {
 
     private ImpostorTeam impostors;
     private CrewmateTeam crewmates;
-    private boolean hasSwordOnce = false;
+    private static boolean hasSwordOnce = false;
 
+    public static boolean isHasSwordOnce() {
+        return hasSwordOnce;
+    }
+
+    public static void setHasSwordOnce(boolean hasSwordOnce) {
+        CommonListeners.hasSwordOnce = hasSwordOnce;
+    }
 
     private ArrayList<PlayerTeam> playerTeamArrayList;
     private MeetingCommand meetingCommand;
@@ -96,6 +105,37 @@ public class CommonListeners implements Listener {
     public CommonListeners(){
 
     }
+
+    @EventHandler
+    public void CompassRightClick(PlayerInteractEvent event){
+        final Player player = event.getPlayer();
+
+        ChatUtilities.broadcast("Le player interact bien avec quelque chose");
+        ChatUtilities.broadcast("item in hand : " + player.getItemInHand().getItemMeta().getDisplayName());
+        ChatUtilities.broadcast("on le compare avec : " + SwordUtilities.getCompass().getItemMeta().getDisplayName());
+        if (player.getItemInHand().getItemMeta().hasAttributeModifiers()){
+            ChatUtilities.broadcast("L'item est bien la compass");
+            if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+                double distance = Double.MAX_VALUE;
+                Player target = null;
+                for (int i = 0; i < crewmates.getPlayerArrayList().size(); i++){
+                    if (player.getLocation().distance(crewmates.getPlayerArrayList().get(i).getPlayer().getLocation()) <= distance){
+                        distance = player.getLocation().distance(crewmates.getPlayerArrayList().get(i).getPlayer().getLocation());
+                        target = crewmates.getPlayerArrayList().get(i).getPlayer();
+                    }
+                }
+
+                if (target == null){
+                    player.sendMessage("Il n'y a pas de joueur !");
+                }else{
+                    player.sendMessage("Le joueur le plus proche est à : " + distance);
+                    player.setCompassTarget(target.getLocation());
+                }
+
+            }
+        }
+    }
+
 
 
 
