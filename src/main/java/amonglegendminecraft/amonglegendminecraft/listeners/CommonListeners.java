@@ -11,10 +11,12 @@ import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.SwordUtilities;
 import com.destroystokyo.paper.inventory.meta.ArmorStandMeta;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -28,10 +30,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerExpChangeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -99,14 +98,28 @@ public class CommonListeners implements Listener {
     }
 
     @EventHandler
+    public void onAdvancementDone(PlayerAdvancementDoneEvent event){
+        final Player player = event.getPlayer();
+        int k = 0;
+        for (int i = 0; i < playerTeamArrayList.size(); i++){
+            if (playerTeamArrayList.get(i).getPlayer() == player){
+                k = i;
+            }
+        }
+
+        ValidateQuest.setSenderValidate(true);
+        ValidateQuest.setPlayerValidate(playerTeamArrayList.get(k));
+        ChatUtilities.broadcast("event.getkey().getkey() = " + event.getAdvancement().getKey().getKey());
+        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),"quest "+ event.getAdvancement().getKey().getKey());
+    }
+
+    @EventHandler
     public void CompassRightClick(PlayerInteractEvent event){
         final Player player = event.getPlayer();
 
-        ChatUtilities.broadcast("Le player interact bien avec quelque chose");
-        ChatUtilities.broadcast("item in hand : " + player.getItemInHand().getItemMeta().getDisplayName());
-        ChatUtilities.broadcast("on le compare avec : " + SwordUtilities.getCompass().getItemMeta().getDisplayName());
+
         if (player.getItemInHand().getItemMeta().hasAttributeModifiers()){
-            ChatUtilities.broadcast("L'item est bien la compass");
+
             if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
                 double distance = Double.MAX_VALUE;
                 Player target = null;
@@ -264,21 +277,25 @@ public class CommonListeners implements Listener {
             final Player player = event.getEntity().getKiller();        //On récupère le joueur qui a tué l'entité
             for (int i = 0; i < playerTeamArrayList.size(); i++){
                 if (playerTeamArrayList.get(i).getPlayer() == player){
-                    if (event.getEntityType().getName().compareToIgnoreCase("Zombie") == 0){      //Si l'entity est un zombie
+                    ChatUtilities.broadcast(event.getEntity().getName());
+                    /*if (event.getEntityType().getName().compareToIgnoreCase("Zombie") == 0){      //Si l'entity est un zombie
                         if (!playerTeamArrayList.get(i).isQuestDone("Zombie")) {
                             ChatUtilities.broadcast("Le joueur" + playerTeamArrayList.get(i).getPlayer().getName());
                             questEntity(playerTeamArrayList.get(i), "Zombie");                                       //On lance la méthode "questEntity"
-                        }else{
-                                playerTeamArrayList.get(i).getPlayer().sendMessage("T'as déjà fait la quête");
                         }
                     }else if(event.getEntityType().getName().compareToIgnoreCase("Enderman") == 0){     //Si c'est un enderman
                         if (!playerTeamArrayList.get(i).isQuestDone("Enderman")){
                             questEntity(playerTeamArrayList.get(i),"Enderman");                  //On lance la méthode "questEntity"
-                        }else{
-                            playerTeamArrayList.get(i).getPlayer().sendMessage("T'as déjà fait la quête");
+                        }
+                    }*/
+                    for (int j = 0; i < playerTeamArrayList.get(i).getQuests().size(); j++ ){
+                        if (playerTeamArrayList.get(i).getQuests().get(j).getQuestName().compareToIgnoreCase(event.getEntity().getName()) == 0){
+                            if (!playerTeamArrayList.get(i).isQuestDone(event.getEntity().getName())){
+                                ChatUtilities.broadcast("j'lance la méthode questEntity");
+                                questEntity(playerTeamArrayList.get(i), event.getEntity().getName());
+                            }
                         }
                     }
-
                 }
 
             }
@@ -293,21 +310,20 @@ public class CommonListeners implements Listener {
     public void questEntity(PlayerTeam player, String nameEntity) throws Exception {
 
         ChatUtilities.broadcast("Le joueur" + player.getPlayer().getName());
-        if (hasStarted){
-            ChatUtilities.broadcast("On vérifie si le score > 1");
-            if (player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore() > 1){ //Si le score du joueur est supérieur à 1
-                //On lui décrémente son nombre d'entité à tuer
-                ChatUtilities.broadcast("On décrémente le score");
-                player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).setScore(player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore()-1); //On lui décrémente son nombre d'entité à tuer
-            }else{
-                if(!player.getQuestElement(nameEntity).isDone()){
-                    ValidateQuest.setSenderValidate(true);
-                    ValidateQuest.setPlayerValidate(player);
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),"quest "+nameEntity);
-                }
-            }
 
+        ChatUtilities.broadcast("On vérifie si le score > 1");
+        if (player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore() > 1){ //Si le score du joueur est supérieur à 1
+            //On lui décrémente son nombre d'entité à tuer
+            ChatUtilities.broadcast("On décrémente le score");
+            player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).setScore(player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore()-1); //On lui décrémente son nombre d'entité à tuer
+        }else{
+            if(!player.getQuestElement(nameEntity).isDone()){
+                ValidateQuest.setSenderValidate(true);
+                ValidateQuest.setPlayerValidate(player);
+                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),"quest "+nameEntity);
+            }
         }
+
     }
 
     @EventHandler

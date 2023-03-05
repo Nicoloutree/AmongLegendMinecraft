@@ -61,7 +61,7 @@ public class PlayerTeam {
         return player;
     }
 
-    public boolean isQuestDone(String nameQuest) throws Exception {
+    public boolean isQuestDone(String nameQuest) {
         int i = 0;
         while (i < quests.size() && quests.get(i).getQuestName().compareToIgnoreCase(nameQuest) != 0){
             i++;
@@ -69,20 +69,40 @@ public class PlayerTeam {
         if (quests.get(i).getQuestName().compareToIgnoreCase(nameQuest) == 0){
             return quests.get(i).isDone();
         }else{
-            throw new Exception("La quête n'existe pas");
+            return false;
         }
 
     }
 
-    public Quest getQuestElement(String nameQuest) throws Exception {
-        int i = 0;
-        while (i < quests.size() && quests.get(i).getQuestName().compareToIgnoreCase(nameQuest) != 0){
-            i++;
+    public Quest getQuestElementFromKey(String key) {
+        int j = 0;
+        for(int i = 0; i < quests.size(); i++){
+            if (quests.get(i).getQuestType().compareToIgnoreCase("advancements") == 0){
+                if(quests.get(i).getKey().compareToIgnoreCase(key) == 0){
+                    j = i;
+                }
+            }
         }
-        if (quests.get(i).getQuestName().compareToIgnoreCase(nameQuest) == 0){
-            return quests.get(i);
+
+        if (quests.get(j).getKey() != null && quests.get(j).getKey().compareToIgnoreCase(key) == 0){
+            return quests.get(j);
         }else{
-            throw new Exception("La quête n'existe pas");
+            return null;
+        }
+    }
+
+    public Quest getQuestElement(String nameQuest) {
+        int j = 0;
+
+        for (int i = 0; i < quests.size(); i++){
+            if (quests.get(i).getQuestName().compareToIgnoreCase(nameQuest) == 0){
+                j = i;
+            }
+        }
+        if (quests.get(j).getQuestName().compareToIgnoreCase(nameQuest) == 0){
+            return quests.get(j);
+        }else{
+            return null;
         }
 
     }

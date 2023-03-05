@@ -65,6 +65,14 @@ public class ValidateQuest implements CommandExecutor {
 
                 Player player = ((Player) sender).getPlayer();
                 if (args.length > 0){
+                    String nameQuest = args[0];
+                    if (args.length>1){
+                        for (int i = 1; i < args.length; i++){
+                            nameQuest = nameQuest + " " + args[i];
+                        }
+                    }
+
+                    ChatUtilities.broadcast(nameQuest);
 
                     int k = 0;
 
@@ -82,7 +90,7 @@ public class ValidateQuest implements CommandExecutor {
                     ChatUtilities.broadcast("nbQuest : " + gameData.getPlayerTeamArrayList().get(k).getNbQuests());
 
                     for (int i = 0; i < gameData.getPlayerTeamArrayList().get(k).getQuests().size(); i++){
-                        if (args[0].compareToIgnoreCase(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName()) == 0){
+                        if (nameQuest.compareToIgnoreCase(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName()) == 0){
                             if (gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("collect") == 0){
                                 try {
                                     questMaterial(gameData.getPlayerTeamArrayList().get(k),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getMaterial(),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
@@ -92,6 +100,14 @@ public class ValidateQuest implements CommandExecutor {
                             }else if(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("entity") == 0){
                                 try {
                                     questMobKills(gameData.getPlayerTeamArrayList().get(k),gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("advancements") == 0){
+                                ChatUtilities.broadcast("la quête est de type advancements");
+                                try {
+                                    questAdvancements(gameData.getPlayerTeamArrayList().get(k), gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -137,25 +153,36 @@ public class ValidateQuest implements CommandExecutor {
                 }
 
             }else{
-
-                try {
-                    questMobKills(playerValidate, args[0]);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                String nameQuest = args[0];
+                if (args.length>1){
+                    for (int i = 1; i < args.length; i++){
+                        nameQuest = nameQuest + " " + args[i];
+                    }
                 }
 
-                ChatUtilities.broadcast("Joueur qu'on check : " + playerValidate.getPlayer().getName());
-                ChatUtilities.broadcast("Team : " + playerValidate.getTeam().getTeamName());
-                ChatUtilities.broadcast("nbQuest done : " + playerValidate.nbQuestDone());
+
+                ChatUtilities.broadcast(nameQuest);
+                if(playerValidate.getQuestElementFromKey(nameQuest) != null){
+
+                }
+
+
+
+                if (playerValidate.getQuestElement(nameQuest) != null && playerValidate.getQuestElement(nameQuest).getQuestType().compareToIgnoreCase("entity") == 0){
+                    questMobKills(playerValidate, nameQuest);
+                }
+                else if (playerValidate.getQuestElementFromKey(nameQuest) != null && playerValidate.getQuestElementFromKey(nameQuest).getKey().compareToIgnoreCase(nameQuest) == 0 && playerValidate.getQuestElementFromKey(nameQuest).getQuestType().compareToIgnoreCase("advancements") == 0){
+                    ChatUtilities.broadcast("ds le else if");
+                    questAdvancements(playerValidate,playerValidate.getQuestElementFromKey(nameQuest).getQuestName());
+                }
+
 
                 if (playerValidate.getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
-                    ChatUtilities.broadcast("1");
+
                     if (playerValidate.getNbQuests() == 2){
-                        ChatUtilities.broadcast("2");
                         SwordUtilities.giveImpostorSword(playerValidate.getPlayer());
                         SwordUtilities.giveCompass(playerValidate.getPlayer());
                     }else if (playerValidate.allQuestDone()) {
-                        ChatUtilities.broadcast("3");
                         playerValidate.setWallet(playerValidate.getWallet() + 10);
                     }
 
@@ -170,7 +197,25 @@ public class ValidateQuest implements CommandExecutor {
         return true;
     }
 
-  public void questMobKills(PlayerTeam player, String mobName) throws Exception {
+    public void questAdvancements(PlayerTeam player, String nameAdvancement) {
+        if (!player.isQuestDone(nameAdvancement)){
+            if (senderValidate){
+                ChatUtilities.broadcast("sendervalidate");
+                player.getQuestElement(nameAdvancement).setDone(true);
+                player.setWallet(player.getWallet()+4);
+                player.getPlayer().sendMessage("Vous avez terminé la quête "+nameAdvancement+" !");
+                player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameAdvancement).resetScore();
+            }else{
+                player.getPlayer().sendMessage("Quête : " + nameAdvancement);
+                player.getPlayer().sendMessage("Description : " + player.getQuestElement(nameAdvancement).getQuestDescription());
+            }
+        }else{
+            player.getPlayer().sendMessage("T'as déjà fait la quête bouffon !");
+        }
+    }
+
+
+  public void questMobKills(PlayerTeam player, String mobName) {
       if (!player.isQuestDone(mobName)){
           if (senderValidate){
               player.getQuestElement(mobName).setDone(true);
