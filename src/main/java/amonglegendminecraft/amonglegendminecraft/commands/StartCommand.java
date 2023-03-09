@@ -107,11 +107,7 @@ public class StartCommand implements CommandExecutor {
                     }
                 }
 
-                ChatUtilities.broadcast("Joueur dans playerTeamArrayList : ");
-                for (int i = 0; i < playerTeamArrayList.size(); i++){
-                    ChatUtilities.broadcast("Joueur : " + playerTeamArrayList.get(i).getPlayer().getName());
-                    ChatUtilities.broadcast("nbQuest : " + playerTeamArrayList.get(i).getNbQuests());
-                }
+
                 //Initialisation des quêtes
 
                 //Randomly teleport all connected in duos (if possible) players in a square perimeter of 2000block

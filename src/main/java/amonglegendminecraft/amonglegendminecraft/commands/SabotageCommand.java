@@ -7,6 +7,7 @@ import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.SwordUtilities;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -113,11 +114,14 @@ public class SabotageCommand implements CommandExecutor {
                             LocationUtilities.createPlatform(location,20,20,Material.COBBLESTONE,Material.COBBLESTONE);
                             stockLoc.add(gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().getLocation());
                             stockLoc.add(temp.get(0).getPlayer().getLocation());
+                            gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().setGameMode(GameMode.ADVENTURE);
+                            temp.get(0).getPlayer().setGameMode(GameMode.ADVENTURE);
                             LocationUtilities.teleportDuoToOctogone(gameData.getImpostors().getPlayerArrayList().get(k).getPlayer(), temp.get(0).getPlayer(), location,20);
                             BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
                             gameData.getImpostors().getPlayerArrayList().get(k).getPlayer().sendTitle(RED +"Octogone", "Vous avez 15 secondes");
                             temp.get(0).getPlayer().sendTitle(RED + "Octogone", "Survivez pendant 15 secondes");
                             int finalK = k;
+                            int finalK1 = k;
                             scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
                             int duree = 15;
 
@@ -132,6 +136,8 @@ public class SabotageCommand implements CommandExecutor {
                                         }
                                         gameData.getImpostors().getPlayerArrayList().get(finalK).getPlayer().sendTitle(RED +"Temps écoulé", "L'octogone est terminé !");
                                         temp.get(0).getPlayer().sendTitle(RED +"Temps écoulé", "L'octogone est terminé !");
+                                        gameData.getImpostors().getPlayerArrayList().get(finalK1).getPlayer().setGameMode(GameMode.SURVIVAL);
+                                        temp.get(0).getPlayer().setGameMode(GameMode.SURVIVAL);
                                         temp.clear();
                                         stockLoc.clear();
                                         scheduler.cancelTasks(AmongLegendMinecraft.plugin);

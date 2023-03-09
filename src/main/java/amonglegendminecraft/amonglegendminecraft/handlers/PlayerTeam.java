@@ -184,6 +184,9 @@ public class PlayerTeam {
     public ArrayList<Quest> getQuests() {
         return quests;
     }
+    public void addQuest(Quest quest){
+        this.quests.add(quest);
+    }
 
     public void setQuests(ArrayList<Quest> quests) {
         this.quests = quests;

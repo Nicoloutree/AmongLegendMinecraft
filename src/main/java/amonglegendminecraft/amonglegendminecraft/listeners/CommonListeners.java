@@ -7,15 +7,13 @@ import amonglegendminecraft.amonglegendminecraft.commands.ValidateQuest;
 import amonglegendminecraft.amonglegendminecraft.handlers.CrewmateTeam;
 import amonglegendminecraft.amonglegendminecraft.handlers.ImpostorTeam;
 import amonglegendminecraft.amonglegendminecraft.handlers.PlayerTeam;
+import amonglegendminecraft.amonglegendminecraft.handlers.Quest;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.SwordUtilities;
 import com.destroystokyo.paper.inventory.meta.ArmorStandMeta;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.SkullType;
+import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
@@ -109,7 +107,6 @@ public class CommonListeners implements Listener {
 
         ValidateQuest.setSenderValidate(true);
         ValidateQuest.setPlayerValidate(playerTeamArrayList.get(k));
-        ChatUtilities.broadcast("event.getkey().getkey() = " + event.getAdvancement().getKey().getKey());
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),"quest "+ event.getAdvancement().getKey().getKey());
     }
 
@@ -118,7 +115,7 @@ public class CommonListeners implements Listener {
         final Player player = event.getPlayer();
 
 
-        if (player.getItemInHand().getItemMeta().hasAttributeModifiers()){
+        if (player.getItemInHand().getItemMeta() != null && player.getItemInHand().getItemMeta().hasAttributeModifiers()){
 
             if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
                 double distance = Double.MAX_VALUE;
@@ -172,10 +169,10 @@ public class CommonListeners implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event){
 
 
-            final Player p = event.getPlayer();
 
-            int y=-1;
-            int k=-1;
+            final Player p = event.getPlayer();
+            p.setGameMode(GameMode.SPECTATOR);
+            event.setDeathMessage("");
 
 
 
@@ -187,6 +184,7 @@ public class CommonListeners implements Listener {
             meta.setOwner(p.getName());
             meta.setDisplayName(p.getName());
             skull.setItemMeta(meta);
+        if(hasStarted){
 
         //--------------------------Création du armorStand quand le joueur meurt----------------------------//
 
@@ -212,32 +210,34 @@ public class CommonListeners implements Listener {
             impostors.removePlayer(playerTeamArrayList.get(h));
         }
 
-        int z = 0;
-        for (int i = 0; i < impostors.getPlayerArrayList().size(); i++){
-            if (p.getKiller() == impostors.getPlayerArrayList().get(i).getPlayer()){
-                z = i;
-            }
-        }
-        if(p.getKiller() == impostors.getPlayerArrayList().get(z).getPlayer()){
-            impostors.getPlayerArrayList().get(z).setCanKill(false);
-            BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-            int finalZ = z;
-            SwordUtilities.removeImpostorSword(impostors.getPlayerArrayList().get(finalZ).getPlayer());
-            scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
-            int cd = impostors.getPlayerArrayList().get(finalZ).getCooldown();
-
-                @Override
-                public void run() {
-
-                    if (cd == 0){
-                        impostors.getPlayerArrayList().get(finalZ).setCanKill(true);
-                        SwordUtilities.giveImpostorSword(impostors.getPlayerArrayList().get(finalZ).getPlayer());
-                        scheduler.cancelTasks(AmongLegendMinecraft.plugin);
-                    }
-
-                    cd--;
+        if (p.getKiller() != null){
+            int z = 0;
+            for (int i = 0; i < impostors.getPlayerArrayList().size(); i++){
+                if (p.getKiller() == impostors.getPlayerArrayList().get(i).getPlayer()){
+                    z = i;
                 }
-            }, 0L,20L); //20 tick = 1 seconde
+            }
+            if(p.getKiller() == impostors.getPlayerArrayList().get(z).getPlayer()){
+                impostors.getPlayerArrayList().get(z).setCanKill(false);
+                BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+                int finalZ = z;
+                SwordUtilities.removeImpostorSword(impostors.getPlayerArrayList().get(finalZ).getPlayer());
+                scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
+                int cd = impostors.getPlayerArrayList().get(finalZ).getCooldown();
+
+                    @Override
+                    public void run() {
+
+                        if (cd == 0){
+                            impostors.getPlayerArrayList().get(finalZ).setCanKill(true);
+                            SwordUtilities.giveImpostorSword(impostors.getPlayerArrayList().get(finalZ).getPlayer());
+                            scheduler.cancelTasks(AmongLegendMinecraft.plugin);
+                        }
+
+                        cd--;
+                    }
+                }, 0L,20L); //20 tick = 1 seconde
+            }
         }
 
 
@@ -245,7 +245,7 @@ public class CommonListeners implements Listener {
                 ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
                 for(Player player : playersArray){                                                  //On parcours tout les joueurs en ligne
                     //On affiche à tout les joueurs que les crewmates ont win
-                    player.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + crewmates.getPlayerArrayList().size()+ "crewmates");
+                    player.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + crewmates.getPlayerArrayList().size()+ " crewmates");
                 }
 
                 //On vide l'arraylist des crewmates
@@ -254,44 +254,32 @@ public class CommonListeners implements Listener {
                 setHasStarted(false);
 
 
-
-
             }else if (crewmates.getPlayerArrayList().isEmpty()){                                    //S'il n'y a plus de crewmates (les impostors ont win)
                 ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
                 for(Player player : playersArray){                                                  //On parcours tout les joueurs en ligne
                     //On affiche à tout les joueurs que les impostors ont win
-                    player.sendTitle(RED + "Les impostors ont gagné !", "Il reste " + impostors.getPlayerArrayList().size()+ "impostors");
+                    player.sendTitle(RED + "Les impostors ont gagné !", "Il reste " + impostors.getPlayerArrayList().size()+ " impostors");
                 }
                 //On vide l'arraylist des impostors
                 impostors.emptyTeam();
                 crewmates.emptyTeam();
                 setHasStarted(false);
             }
+        }
 
     }
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) throws Exception {
-        ChatUtilities.broadcast("etat hastarted : " + hasStarted);
+
         if (hasStarted){
             final Player player = event.getEntity().getKiller();        //On récupère le joueur qui a tué l'entité
             for (int i = 0; i < playerTeamArrayList.size(); i++){
                 if (playerTeamArrayList.get(i).getPlayer() == player){
-                    ChatUtilities.broadcast(event.getEntity().getName());
-                    /*if (event.getEntityType().getName().compareToIgnoreCase("Zombie") == 0){      //Si l'entity est un zombie
-                        if (!playerTeamArrayList.get(i).isQuestDone("Zombie")) {
-                            ChatUtilities.broadcast("Le joueur" + playerTeamArrayList.get(i).getPlayer().getName());
-                            questEntity(playerTeamArrayList.get(i), "Zombie");                                       //On lance la méthode "questEntity"
-                        }
-                    }else if(event.getEntityType().getName().compareToIgnoreCase("Enderman") == 0){     //Si c'est un enderman
-                        if (!playerTeamArrayList.get(i).isQuestDone("Enderman")){
-                            questEntity(playerTeamArrayList.get(i),"Enderman");                  //On lance la méthode "questEntity"
-                        }
-                    }*/
+
                     for (int j = 0; i < playerTeamArrayList.get(i).getQuests().size(); j++ ){
                         if (playerTeamArrayList.get(i).getQuests().get(j).getQuestName().compareToIgnoreCase(event.getEntity().getName()) == 0){
                             if (!playerTeamArrayList.get(i).isQuestDone(event.getEntity().getName())){
-                                ChatUtilities.broadcast("j'lance la méthode questEntity");
                                 questEntity(playerTeamArrayList.get(i), event.getEntity().getName());
                             }
                         }
@@ -304,17 +292,34 @@ public class CommonListeners implements Listener {
 
     }
 
+    @EventHandler
+    public void onDisconnect(PlayerQuitEvent event){
+        /*final Player player = event.getPlayer();
+        for (int i = 0; i < playerTeamArrayList.size(); i++){
+            if (playerTeamArrayList.get(i).getPlayer() == player){
+                if (playerTeamArrayList.get(i).getTeam().getTeamName().compareToIgnoreCase("impostors") == 0){
+                    ChatUtilities.broadcast("Le joueur " + player.getName() + " était un impostor");
+                    impostors.removePlayer(playerTeamArrayList.get(i));
+                }else if (playerTeamArrayList.get(i).getTeam().getTeamName().compareToIgnoreCase("crewmates") == 0){
+                    ChatUtilities.broadcast("Le joueur " + player.getName() + " était un crewmate");
+                    crewmates.removePlayer(playerTeamArrayList.get(i));
+                }
+            }
+        }*/
+
+    }
+
 
 
 
     public void questEntity(PlayerTeam player, String nameEntity) throws Exception {
 
-        ChatUtilities.broadcast("Le joueur" + player.getPlayer().getName());
 
-        ChatUtilities.broadcast("On vérifie si le score > 1");
+
+
         if (player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore() > 1){ //Si le score du joueur est supérieur à 1
             //On lui décrémente son nombre d'entité à tuer
-            ChatUtilities.broadcast("On décrémente le score");
+
             player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).setScore(player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore()-1); //On lui décrémente son nombre d'entité à tuer
         }else{
             if(!player.getQuestElement(nameEntity).isDone()){
@@ -328,25 +333,26 @@ public class CommonListeners implements Listener {
 
     @EventHandler
     public void onPlayerEarnExp(PlayerExpChangeEvent event){
-        if (hasStarted){
+        /*if (hasStarted){
             final Player player = event.getPlayer();
 
             for (int i = 0; i < playerTeamArrayList.size(); i++) {
                 if (playerTeamArrayList.get(i).getPlayer() == player) {
                     if (playerTeamArrayList.get(i).getTeam().getTeamName().compareToIgnoreCase("Crewmates") == 0) {
-                        if (crewmates.allPlayerQuestDone()) {
-                            ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
-                            for (Player p : playersArray) {
-                                p.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + crewmates.getPlayerArrayList().size() + " crewmates");
+                        if (crewmates.allPlayerQuestDone()){
+
+                            final Quest finalQuest = Quest.pickFinalQuest();
+                            for (int j = 0; j < playerTeamArrayList.size(); j++){
+                                playerTeamArrayList.get(j).addQuest(finalQuest);
                             }
-                            crewmates.emptyTeam();
-                            impostors.emptyTeam();
+                            crewmates.sendMessage("Dernière quête !","Il vous reste une dernière quête pour gagner la partie !");
+                            impostors.sendMessage("Dernière quête !","Empêchez les crewmates d'accomplir la dernière quête !");
                         }
                     }
                 }
             }
 
-        }
+        }*/
     }
 
 

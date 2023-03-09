@@ -1,9 +1,8 @@
 package amonglegendminecraft.amonglegendminecraft.commands;
 
-import amonglegendminecraft.amonglegendminecraft.AmongLegendMinecraft;
 import amonglegendminecraft.amonglegendminecraft.handlers.PlayerTeam;
 import amonglegendminecraft.amonglegendminecraft.handlers.Quest;
-import amonglegendminecraft.amonglegendminecraft.listeners.CommonListeners;
+import amonglegendminecraft.amonglegendminecraft.handlers.createScoreboard;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.SwordUtilities;
 import org.bukkit.Bukkit;
@@ -11,11 +10,8 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scoreboard.Score;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,6 +23,8 @@ public class ValidateQuest implements CommandExecutor {
     private StartCommand gameData;
     private static boolean senderValidate = false;
     private static PlayerTeam playerValidate;
+    private boolean lastrun = false;
+    private final Quest finalQuest = Quest.pickFinalQuest();
 
     public static boolean isSenderValidate() {
         return senderValidate;
@@ -72,11 +70,9 @@ public class ValidateQuest implements CommandExecutor {
                         }
                     }
 
-                    ChatUtilities.broadcast(nameQuest);
 
                     int k = 0;
 
-                    ChatUtilities.broadcast("size de getPlayerTeamArrayList : " + gameData.getPlayerTeamArrayList().size());
 
                     for (int i = 0; i < gameData.getPlayerTeamArrayList().size(); i++){ //joueur qui a fait la commande
                         if (gameData.getPlayerTeamArrayList().get(i).getPlayer() == player){
@@ -84,10 +80,7 @@ public class ValidateQuest implements CommandExecutor {
                         }
                     }
 
-                    ChatUtilities.broadcast("Joueur qui fait la commande /quest");
-                    ChatUtilities.broadcast("Team du joueur : " + gameData.getPlayerTeamArrayList().get(k).getTeam().getTeamName());
-                    ChatUtilities.broadcast("Joueur : " + gameData.getPlayerTeamArrayList().get(k).getPlayer().getName());
-                    ChatUtilities.broadcast("nbQuest : " + gameData.getPlayerTeamArrayList().get(k).getNbQuests());
+
 
                     for (int i = 0; i < gameData.getPlayerTeamArrayList().get(k).getQuests().size(); i++){
                         if (nameQuest.compareToIgnoreCase(gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName()) == 0){
@@ -105,7 +98,7 @@ public class ValidateQuest implements CommandExecutor {
                                 }
                             }
                             else if (gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestType().compareToIgnoreCase("advancements") == 0){
-                                ChatUtilities.broadcast("la quête est de type advancements");
+
                                 try {
                                     questAdvancements(gameData.getPlayerTeamArrayList().get(k), gameData.getPlayerTeamArrayList().get(k).getQuests().get(i).getQuestName());
                                 } catch (Exception e) {
@@ -126,17 +119,33 @@ public class ValidateQuest implements CommandExecutor {
 
                     }
 
-                    /*
-                    if (gameData.getCrewmates().allPlayerQuestDone()){
 
-                        ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());
-                        for(Player p : playersArray){
-                            p.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + gameData.getCrewmates().getPlayerArrayList().size()+ " crewmates");
+                    if (gameData.getCrewmates().allPlayerQuestDone()){
+                        for (int i = 0; i < gameData.getPlayerTeamArrayList().size(); i++){
+                            gameData.getPlayerTeamArrayList().get(i).addQuest(finalQuest);
+                            createScoreboard.addObjectiveForAPlayer(gameData.getPlayerTeamArrayList().get(i), finalQuest);
                         }
-                        gameData.getCrewmates().emptyTeam();
-                        gameData.getImpostors().emptyTeam();
-                        gameData.setGameStarted(false);
-                    }*/
+                        gameData.getCrewmates().sendMessage("Dernière quête !","Il vous reste une dernière quête pour gagner la partie !");
+                        gameData.getImpostors().sendMessage("Dernière quête !","Empêchez les crewmates d'accomplir la dernière quête !");
+                        this.lastrun = true;
+                    }
+
+                    if (lastrun){
+                        for (int i = 0; i < gameData.getCrewmates().getPlayerArrayList().size(); i++){
+                            if (gameData.getCrewmates().getPlayerArrayList().get(i).isQuestDone(finalQuest.getQuestName())){
+                                ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
+                                for(Player players : playersArray){                                                  //On parcours tout les joueurs en ligne
+                                    //On affiche à tout les joueurs que les crewmates ont win
+                                    players.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + gameData.getCrewmates().getPlayerArrayList().size()+ "crewmates");
+                                }
+                                //On vide l'arraylist des crewmates
+                                gameData.getCrewmates().emptyTeam();
+                                gameData.getImpostors().emptyTeam();
+                                gameData.setGameStarted(false);
+                            }
+                        }
+                    }
+
 
                 }else{
                     int y = 0;
@@ -161,25 +170,18 @@ public class ValidateQuest implements CommandExecutor {
                 }
 
 
-                ChatUtilities.broadcast(nameQuest);
-                if(playerValidate.getQuestElementFromKey(nameQuest) != null){
-
-                }
-
-
 
                 if (playerValidate.getQuestElement(nameQuest) != null && playerValidate.getQuestElement(nameQuest).getQuestType().compareToIgnoreCase("entity") == 0){
                     questMobKills(playerValidate, nameQuest);
                 }
                 else if (playerValidate.getQuestElementFromKey(nameQuest) != null && playerValidate.getQuestElementFromKey(nameQuest).getKey().compareToIgnoreCase(nameQuest) == 0 && playerValidate.getQuestElementFromKey(nameQuest).getQuestType().compareToIgnoreCase("advancements") == 0){
-                    ChatUtilities.broadcast("ds le else if");
                     questAdvancements(playerValidate,playerValidate.getQuestElementFromKey(nameQuest).getQuestName());
                 }
 
 
                 if (playerValidate.getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
 
-                    if (playerValidate.getNbQuests() == 2){
+                    if (playerValidate.nbQuestDone() == 2){
                         SwordUtilities.giveImpostorSword(playerValidate.getPlayer());
                         SwordUtilities.giveCompass(playerValidate.getPlayer());
                     }else if (playerValidate.allQuestDone()) {
@@ -189,6 +191,33 @@ public class ValidateQuest implements CommandExecutor {
                 }
                 playerValidate = null;
                 senderValidate = false;
+
+                if (gameData.getCrewmates().allPlayerQuestDone()){
+
+                    for (int i = 0; i < gameData.getPlayerTeamArrayList().size(); i++){
+                        gameData.getPlayerTeamArrayList().get(i).addQuest(finalQuest);
+                        createScoreboard.addObjectiveForAPlayer(gameData.getPlayerTeamArrayList().get(i), finalQuest);
+                    }
+                    gameData.getCrewmates().sendMessage("Dernière quête !","Il vous reste une dernière quête pour gagner la partie !");
+                    gameData.getImpostors().sendMessage("Dernière quête !","Empêchez les crewmates d'accomplir la dernière quête !");
+                    this.lastrun = true;
+                }
+
+                if (lastrun){
+                    for (int i = 0; i < gameData.getCrewmates().getPlayerArrayList().size(); i++){
+                        if (gameData.getCrewmates().getPlayerArrayList().get(i).isQuestDone(finalQuest.getQuestName())){
+                            ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
+                            for(Player players : playersArray){                                                  //On parcours tout les joueurs en ligne
+                                //On affiche à tout les joueurs que les crewmates ont win
+                                players.sendTitle(BLUE + "Les crewmates ont gagné !", "Il reste " + gameData.getCrewmates().getPlayerArrayList().size()+ "crewmates");
+                            }
+                            //On vide l'arraylist des crewmates
+                            gameData.getCrewmates().emptyTeam();
+                            gameData.getImpostors().emptyTeam();
+                            gameData.setGameStarted(false);
+                        }
+                    }
+                }
             }
 
         }
@@ -200,7 +229,6 @@ public class ValidateQuest implements CommandExecutor {
     public void questAdvancements(PlayerTeam player, String nameAdvancement) {
         if (!player.isQuestDone(nameAdvancement)){
             if (senderValidate){
-                ChatUtilities.broadcast("sendervalidate");
                 player.getQuestElement(nameAdvancement).setDone(true);
                 player.setWallet(player.getWallet()+4);
                 player.getPlayer().sendMessage("Vous avez terminé la quête "+nameAdvancement+" !");
@@ -238,8 +266,7 @@ public class ValidateQuest implements CommandExecutor {
     public void questMaterial(PlayerTeam player, Material material, String nameQuest) throws Exception {
         int res;
 
-        ChatUtilities.broadcast("Nom du joueur qu'on check :" + player.getPlayer().getName());
-        ChatUtilities.broadcast("Etat de la quête :" + player.isQuestDone(nameQuest));
+
 
 
         if (!player.isQuestDone(nameQuest)){

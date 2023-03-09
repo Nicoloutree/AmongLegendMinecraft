@@ -41,8 +41,7 @@ public class VoteCommand implements CommandExecutor {
                     k = i;
                 }
             }
-            ChatUtilities.broadcast("y = " + y);
-            ChatUtilities.broadcast("k = " + k);
+
 
             if (y != -1){
                 if (!meetingData.getGameData().getPlayerTeamArrayList().get(k).isHasVoted()){ //Si le joueur qui effectue la commande n'a pas voté

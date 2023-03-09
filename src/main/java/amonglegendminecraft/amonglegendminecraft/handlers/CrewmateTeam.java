@@ -23,6 +23,11 @@ public class CrewmateTeam extends Team{
         }
     }
 
+    public void sendMessage(String title, String message){
+        for(PlayerTeam player : this.getPlayerArrayList()){
+            player.getPlayer().sendTitle(BLUE + title, BLUE + message);
+        }
+    }
 
 
 }

@@ -65,10 +65,10 @@ public abstract class Team {
     public void sendTitleToAllPlayers(ArrayList<Player> playerArrayList, String title, String message){
         for(Player player : playerArrayList){
             if (getTeamName().equals("Crewmates")){
-                ChatUtilities.broadcast("On est dans le if");
+
                 player.sendTitle(BLUE + title, message);
             }else{
-                ChatUtilities.broadcast("On est dans le else");
+
                 player.sendTitle(RED + title, message);
             }
         }

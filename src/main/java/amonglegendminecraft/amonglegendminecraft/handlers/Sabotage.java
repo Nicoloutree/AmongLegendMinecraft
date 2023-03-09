@@ -20,7 +20,7 @@ public class Sabotage {
     public static ArrayList<Sabotage> initSabotage(){
         ArrayList<Sabotage> temp = new ArrayList<>();
 
-        temp.add(new Sabotage("Ralentissemnt","Applique un ralentissemnt à tout les crewmates", 2));
+        temp.add(new Sabotage("Ralentissement","Applique un ralentissemnt à tout les crewmates", 2));
         temp.add(new Sabotage("Mining", "Applique mining fatigue à tout les crewmates",2));
         temp.add(new Sabotage("Light","Rend aveugle tout les crewmates",4));
         temp.add(new Sabotage("Octogone","Téléporte un crewmate au hasard et toi dans un octogone sans règle",10));

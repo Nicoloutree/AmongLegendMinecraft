@@ -4,6 +4,8 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static org.bukkit.ChatColor.BLUE;
 import static org.bukkit.ChatColor.RED;
 
 public class ImpostorTeam extends Team{
@@ -45,5 +47,11 @@ public class ImpostorTeam extends Team{
             }
         }
         return null;
+    }
+
+    public void sendMessage(String title, String message){
+        for(PlayerTeam player : this.getPlayerArrayList()){
+            player.getPlayer().sendTitle(RED + title, RED + message);
+        }
     }
 }

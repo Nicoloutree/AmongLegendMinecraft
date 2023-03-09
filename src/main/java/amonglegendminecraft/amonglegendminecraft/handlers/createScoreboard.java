@@ -68,13 +68,19 @@ public class createScoreboard {
         for (int i = 0; i < player.size(); i++) {//Parcours de tout les joueurs
 
             createBoard();                                                  //On créer le board (1 seul par joueur)
-            ChatUtilities.broadcast("Nom du joueur auquel on attribue les quêtes : " + player.get(i).getPlayer().getName());
             playerInfos(player.get(i));
             addObjective(player.get(i).getQuests());
 
             player.get(i).getPlayer().setScoreboard(scoreboard);  //On attribue le bon board au joueur
 
         }
+    }
+
+    public static void addObjectiveForAPlayer(PlayerTeam player, Quest quest){
+        Score scorename;
+        scoreboard = player.getPlayer().getScoreboard();
+        scorename = objective.getScore(quest.getQuestName());
+        scorename.setScore(quest.getCompteur());
     }
 
 }

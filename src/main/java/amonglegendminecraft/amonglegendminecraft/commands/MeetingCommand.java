@@ -112,7 +112,9 @@ public class MeetingCommand implements CommandExecutor {
 
                 for (int i = 0; i < playersArray.size(); i++){
                     locations.add(playersArray.get(i).getLocation());
-                    playersArray.get(i).setGameMode(GameMode.ADVENTURE);
+                    if (playersArray.get(i).getGameMode() == GameMode.SURVIVAL){
+                        playersArray.get(i).setGameMode(GameMode.ADVENTURE);
+                    }
                 }
 
                 LocationUtilities.teleportAllPlayersToLocationForMeeting(playersArray, meetingLocation, taillebase);
@@ -121,7 +123,7 @@ public class MeetingCommand implements CommandExecutor {
                 Bukkit.getWorld("world").setPVP(false);
 
 
-                duree = 40;
+                duree = 35;
                 ChatUtilities.title("Meeting","Vous avez " + duree + " secondes pour voter !");
                 BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
                 scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
@@ -133,22 +135,12 @@ public class MeetingCommand implements CommandExecutor {
                             ChatUtilities.title("Meeting", "Il vous reste 30 secondes !");
                         }else if (duree == 0){
 
-                            int k = 0;
-                            int compteur = 0;
-                            for (int i = 0; i < playerVoteds.size() && compteur != -1; i++){
-
-                                if (compteur < playerVoteds.get(i).getNbVotes()){
-                                    compteur = playerVoteds.get(i).getNbVotes();
-                                    k = i;
-                                }else if(compteur == playerVoteds.get(i).getNbVotes() && compteur != 0){
-                                    compteur = -1;
-                                }
-                            }
-                            if (compteur == 0){
+                            PlayerTeam playertoeject = getMostVotedPlayer(playerVoteds);
+                            if (playertoeject == null){
                                 ChatUtilities.title("Personne est éjecté", "Personne a voté");
-                            }else if (compteur != -1){
-                                playerVoteds.get(k).getPlayer().setHealth(0);
-                                ChatUtilities.title(playerVoteds.get(k).getPlayer().getName() + " est éjecté", "Il a obtenu" + compteur + " votes");
+                            }else{
+                                playertoeject.getPlayer().setHealth(0);
+                                ChatUtilities.title(playertoeject.getPlayer().getName() + " est éjecté", "Il a obtenu" + playertoeject.getNbVotes() + " votes");
                             }
 
 
@@ -162,7 +154,9 @@ public class MeetingCommand implements CommandExecutor {
 
                             for (int i = 0; i < playersArray.size(); i++){
                                 playersArray.get(i).teleport(locations.get(i));
-                                playersArray.get(i).setGameMode(GameMode.SURVIVAL);
+                                if (playersArray.get(i).getGameMode() == GameMode.ADVENTURE){
+                                    playersArray.get(i).setGameMode(GameMode.SURVIVAL);
+                                }
                             }
 
                             LocationUtilities.removePlatform(meetingLocation,10,10);
@@ -175,7 +169,32 @@ public class MeetingCommand implements CommandExecutor {
                 }, 0L,20L); //20 tick = 1 seconde
 
 
+        }else if(command.getName().equalsIgnoreCase("meeting") && meetingActivate){
+            if (args[0].compareToIgnoreCase("end") == 0){
+                duree = 1;
+            }
         }
         return true;
+    }
+
+    private PlayerTeam getMostVotedPlayer(ArrayList<PlayerTeam> players){
+        int compteur = 0;
+        int k = 0;
+        boolean egalite = false;
+        for (int i = 0; i < players.size() && !egalite; i++){
+            if (compteur < players.get(i).getNbVotes()){
+                compteur = players.get(i).getNbVotes();
+                k = i;
+            }else if(compteur == players.get(i).getNbVotes()){
+                egalite = true;
+            }
+        }
+        if (compteur == 0){
+            return null;
+        }else if (egalite){
+            return null;
+        }else{
+            return players.get(k);
+        }
     }
 }
