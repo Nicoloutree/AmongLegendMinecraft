@@ -129,9 +129,6 @@ public class Quest {
         tempCollect.add(new Quest("Diamond","Recolter 15 diamants",false,15,"collect",Material.DIAMOND));
         tempCollect.add(new Quest("Book","Obtenir 20 Livres",false,15,"collect",Material.BOOK));
         tempCollect.add(new Quest("HAY BLOCK","Obtenir 9 Blocs de foins",false,9,"collect",Material.HAY_BLOCK));
-        tempCollect.add(new Quest("Pumpkin Pie","Obtenir 16 Pumpkin Pie",false,16,"collect",Material.PUMPKIN_PIE));
-        tempCollect.add(new Quest("HoneyComb","Obtenir 6 Rayon de Miel",false,6,"collect",Material.HONEYCOMB));
-        tempCollect.add(new Quest("Honey Bottle","Obtenir 6 Bouteilles de Miel",false,6,"collect",Material.HONEY_BOTTLE));
         tempCollect.add(new Quest("TNT","Obtenir 10 TNT",false,10,"collect",Material.TNT));
         tempCollect.add(new Quest("Obsidian","Obtenir 10 Obsidinnes",false,10,"collect",Material.OBSIDIAN));
         tempCollect.add(new Quest("Bookshelves","Obtenir 10 Bibliothèques",false,10,"collect",Material.BOOKSHELF));

@@ -85,6 +85,7 @@ public class MeetingCommand implements CommandExecutor {
         if (command.getName().equalsIgnoreCase("meeting") && !meetingActivate) {
 
             meetingActivate = true;
+            playerVoteds.clear();
 
             if (playerWhoReport != null){
                 ChatUtilities.broadcast("Un meeting a été lancé par : " + playerWhoReport.getName());
@@ -123,7 +124,7 @@ public class MeetingCommand implements CommandExecutor {
                 Bukkit.getWorld("world").setPVP(false);
 
 
-                duree = 35;
+                duree = 120;
                 ChatUtilities.title("Meeting","Vous avez " + duree + " secondes pour voter !");
                 BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
                 scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
@@ -142,8 +143,11 @@ public class MeetingCommand implements CommandExecutor {
                                 playertoeject.getPlayer().setHealth(0);
                                 ChatUtilities.title(playertoeject.getPlayer().getName() + " est éjecté", "Il a obtenu" + playertoeject.getNbVotes() + " votes");
                             }
-
-
+                            for (int i = 0; i < playerVoteds.size(); i++){
+                                playerVoteds.get(i).setNbVotes(0);
+                                playerVoteds.get(i).getPlayersThatVoted().clear();
+                                playerVoteds.get(i).setHasVoted(false);
+                            }
                             playerVoteds.clear();
                             armorStands.clear();
                             playerWhoReport = null;
@@ -181,7 +185,9 @@ public class MeetingCommand implements CommandExecutor {
         int compteur = 0;
         int k = 0;
         boolean egalite = false;
-        for (int i = 0; i < players.size() && !egalite; i++){
+        for (int i = 0; i < players.size(); i++){
+            ChatUtilities.broadcast("compteur = " + compteur);
+            ChatUtilities.broadcast("nbvote "+players.get(i).getPlayer().getName() +" : " + players.get(i).getNbVotes());
             if (compteur < players.get(i).getNbVotes()){
                 compteur = players.get(i).getNbVotes();
                 k = i;

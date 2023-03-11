@@ -1,17 +1,17 @@
 package amonglegendminecraft.amonglegendminecraft.commands;
 
+import amonglegendminecraft.amonglegendminecraft.AmongLegendMinecraft;
 import amonglegendminecraft.amonglegendminecraft.handlers.*;
 import amonglegendminecraft.amonglegendminecraft.listeners.CommonListeners;
 import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.LocationUtilities;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.*;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,8 @@ import java.util.ArrayList;
 public class StartCommand implements CommandExecutor {
 
     private MeetingCommand meetingData;
-    int nbQuest = 3;
+    private int nbQuest = 3;
+    private int timerborder = 60;
     private CommonListeners commonListeners = new CommonListeners();
     private ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
     private CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
@@ -75,6 +76,8 @@ public class StartCommand implements CommandExecutor {
                 setGameStarted(false);
             }
             if (!gameStarted){
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule logAdminCommands false");
+
                 impostors.emptyTeam();
                 crewmates.emptyTeam();
                 playerTeamArrayList.clear();
@@ -101,7 +104,7 @@ public class StartCommand implements CommandExecutor {
 
                 //Addding every other player to the crewmate
                 for(PlayerTeam player : playerTeamArrayList){
-                    if(!impostors.isFromTeam(player)){
+                    if(!impostors.isFromTeam(player)) {
                         crewmates.addPlayer(player);
                         player.setTeam(crewmates);
                     }
@@ -126,6 +129,31 @@ public class StartCommand implements CommandExecutor {
                 commonListeners.setHasStarted(true);
 
                 createScoreboard.createBoardForPlayers(playerTeamArrayList);
+                Bukkit.getWorld("world").setPVP(false);
+
+                WorldBorder wb = Bukkit.getWorld("world").getWorldBorder();
+                wb.setCenter(0, 0);
+                wb.setSize(500);
+                BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+                scheduler.scheduleSyncRepeatingTask(AmongLegendMinecraft.plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (timerborder == 300){
+                            ChatUtilities.title("Border","La bordure sera retirée dans 5 minutes");
+                        }else if(timerborder == 60){
+                            ChatUtilities.title("Border", "La bordure sera retirée dans 1 minute");
+                        }else if (timerborder == 0){
+
+                            ChatUtilities.title("Border","La bordure est retirée et le pvp activé");
+                            Bukkit.getWorld("world").setPVP(true);
+                            wb.reset();
+                            scheduler.cancelTasks(AmongLegendMinecraft.plugin);
+
+                        }
+
+                        timerborder--;
+                    }
+                }, 0L,20L); //20 tick = 1 seconde
 
                 ChatUtilities.broadcast("everything executed");
 

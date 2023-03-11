@@ -6,6 +6,7 @@ amonglegendminecraft\amonglegendminecraft\utils\LocationUtilities.class
 amonglegendminecraft\amonglegendminecraft\utils\ChatUtilities.class
 amonglegendminecraft\amonglegendminecraft\listeners\CommonListeners$1.class
 amonglegendminecraft\amonglegendminecraft\commands\MeetingCommand$1.class
+amonglegendminecraft\amonglegendminecraft\commands\StartCommand$1.class
 amonglegendminecraft\amonglegendminecraft\handlers\ImpostorTeam.class
 amonglegendminecraft\amonglegendminecraft\listeners\InventoryCheck.class
 amonglegendminecraft\amonglegendminecraft\utils\SwordUtilities.class

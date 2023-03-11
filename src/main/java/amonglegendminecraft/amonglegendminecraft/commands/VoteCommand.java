@@ -44,7 +44,7 @@ public class VoteCommand implements CommandExecutor {
 
 
             if (y != -1){
-                if (!meetingData.getGameData().getPlayerTeamArrayList().get(k).isHasVoted()){ //Si le joueur qui effectue la commande n'a pas voté
+                if (!meetingData.getGameData().getPlayerTeamArrayList().get(k).isHasVoted()){ //Si le joueur qui effectue la commande n'a pas déjà voté
                     meetingData.getGameData().getPlayerTeamArrayList().get(k).setHasVoted(true);
                     meetingData.getGameData().getPlayerTeamArrayList().get(y).incrementNbVotes();       //On incrémente le nb de votes du joueur voté
                     meetingData.getGameData().getPlayerTeamArrayList().get(y).getPlayersThatVoted().add(meetingData.getGameData().getPlayerTeamArrayList().get(k)); //On ajoute le joueur qui a voté dans la liste des joueurs qui ont voté contre le joueur voté
