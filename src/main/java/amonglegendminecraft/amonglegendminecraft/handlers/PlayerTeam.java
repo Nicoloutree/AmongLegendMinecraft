@@ -11,6 +11,10 @@ public class PlayerTeam {
     private Player player;
     private Team team;
     private ArrayList<Quest> quests;
+
+
+    private boolean hasImpoSword;
+    private boolean hasExtraCash;
     private boolean canKill;
     private int cooldown;
     private int nbVotes;
@@ -29,6 +33,8 @@ public class PlayerTeam {
         this.nbVotes = 0;
         this.hasVoted = false;
         this.nbQuests = nbQuests;
+        this.hasExtraCash = false;
+        this.hasImpoSword = false;
         quests = Quest.initializeQuests(nbQuests);
         playersThatVoted = new ArrayList<>();
         this.wallet = 0;
@@ -55,6 +61,21 @@ public class PlayerTeam {
 
     public void setPlayersThatVoted(ArrayList<PlayerTeam> playersThatVoted) {
         this.playersThatVoted = playersThatVoted;
+    }
+    public boolean isHasImpoSword() {
+        return hasImpoSword;
+    }
+
+    public void setHasImpoSword(boolean hasImpoSword) {
+        this.hasImpoSword = hasImpoSword;
+    }
+
+    public boolean isHasExtraCash() {
+        return hasExtraCash;
+    }
+
+    public void setHasExtraCash(boolean hasExtraCash) {
+        this.hasExtraCash = hasExtraCash;
     }
 
     public Player getPlayer() {

@@ -154,7 +154,7 @@ public class StartCommand implements CommandExecutor {
                         timerborder--;
                     }
                 }, 0L,20L); //20 tick = 1 seconde
-
+                ValidateQuest.setLastrun(false);
                 ChatUtilities.broadcast("everything executed");
 
             }else{

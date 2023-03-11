@@ -23,8 +23,20 @@ public class ValidateQuest implements CommandExecutor {
     private StartCommand gameData;
     private static boolean senderValidate = false;
     private static PlayerTeam playerValidate;
-    private boolean lastrun = false;
+    private static boolean lastrun = false;
     private final Quest finalQuest = Quest.pickFinalQuest();
+
+    public static boolean isLastrun() {
+        return lastrun;
+    }
+
+    public static void setLastrun(boolean lastrun) {
+        ValidateQuest.lastrun = lastrun;
+    }
+
+    public Quest getFinalQuest() {
+        return finalQuest;
+    }
 
     public static boolean isSenderValidate() {
         return senderValidate;
@@ -110,11 +122,13 @@ public class ValidateQuest implements CommandExecutor {
 
 
                     if (gameData.getPlayerTeamArrayList().get(k).getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
-                        if (gameData.getPlayerTeamArrayList().get(k).nbQuestDone() == 2){
+                        if (gameData.getPlayerTeamArrayList().get(k).nbQuestDone() == 2 && !gameData.getPlayerTeamArrayList().get(k).isHasImpoSword() ){
                             SwordUtilities.giveImpostorSword(gameData.getPlayerTeamArrayList().get(k).getPlayer());
                             SwordUtilities.giveCompass(gameData.getPlayerTeamArrayList().get(k).getPlayer());
-                        }else if (gameData.getPlayerTeamArrayList().get(k).allQuestDone()) {
+                            gameData.getPlayerTeamArrayList().get(k).setHasImpoSword(true);
+                        }else if (gameData.getPlayerTeamArrayList().get(k).allQuestDone() && !gameData.getPlayerTeamArrayList().get(k).isHasExtraCash()) {
                             gameData.getPlayerTeamArrayList().get(k).setWallet(gameData.getPlayerTeamArrayList().get(k).getWallet() + 10);
+                            gameData.getPlayerTeamArrayList().get(k).setHasExtraCash(true);
                         }
 
                     }
@@ -181,11 +195,13 @@ public class ValidateQuest implements CommandExecutor {
 
                 if (playerValidate.getTeam().getTeamName().compareToIgnoreCase("Impostors") == 0){
 
-                    if (playerValidate.nbQuestDone() == 2){
+                    if (playerValidate.nbQuestDone() == 2 && !playerValidate.isHasImpoSword()){
                         SwordUtilities.giveImpostorSword(playerValidate.getPlayer());
                         SwordUtilities.giveCompass(playerValidate.getPlayer());
-                    }else if (playerValidate.allQuestDone()) {
+                        playerValidate.setHasImpoSword(true);
+                    }else if (playerValidate.allQuestDone() && !playerValidate.isHasExtraCash()) {
                         playerValidate.setWallet(playerValidate.getWallet() + 10);
+                        playerValidate.setHasExtraCash(true);
                     }
 
                 }
@@ -200,7 +216,7 @@ public class ValidateQuest implements CommandExecutor {
                     }
                     gameData.getCrewmates().sendMessage("Dernière quête !","Il vous reste une dernière quête pour gagner la partie !");
                     gameData.getImpostors().sendMessage("Dernière quête !","Empêchez les crewmates d'accomplir la dernière quête !");
-                    this.lastrun = true;
+                    lastrun = true;
                 }
 
                 if (lastrun){

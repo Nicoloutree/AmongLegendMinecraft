@@ -94,7 +94,7 @@ public class SabotageCommand implements CommandExecutor {
                     Sabotage ralentissement = gameData.getImpostors().getSabotageElementFromName("Ralentissement");
 
                     if (gameData.getImpostors().getPlayerArrayList().get(k).getWallet() >= ralentissement.getPrice()) {
-                        effectTransaction(new PotionEffect(PotionEffectType.SLOW_DIGGING, 10 * 20, 10, false, false),
+                        effectTransaction(new PotionEffect(PotionEffectType.SLOW, 10 * 20, 10, false, false),
                                 gameData.getCrewmates().getPlayerArrayList(),gameData.getImpostors().getPlayerArrayList().get(k), ralentissement.getPrice());
                     }else{
                         int res = gameData.getImpostors().getPlayerArrayList().get(k).getWallet()- ralentissement.getPrice();
@@ -138,7 +138,6 @@ public class SabotageCommand implements CommandExecutor {
                                         temp.get(0).getPlayer().sendTitle(RED +"Temps écoulé", "L'octogone est terminé !");
                                         gameData.getImpostors().getPlayerArrayList().get(finalK1).getPlayer().setGameMode(GameMode.SURVIVAL);
                                         temp.get(0).getPlayer().setGameMode(GameMode.SURVIVAL);
-                                        temp.clear();
                                         stockLoc.clear();
                                         scheduler.cancelTasks(AmongLegendMinecraft.plugin);
                                     }
