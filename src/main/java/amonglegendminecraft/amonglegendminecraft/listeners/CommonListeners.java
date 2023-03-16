@@ -277,7 +277,7 @@ public class CommonListeners implements Listener {
             for (int i = 0; i < playerTeamArrayList.size(); i++){
                 if (playerTeamArrayList.get(i).getPlayer() == player){
 
-                    for (int j = 0; i < playerTeamArrayList.get(i).getQuests().size(); j++ ){
+                    for (int j = 0; j < playerTeamArrayList.get(i).getQuests().size(); j++ ){
                         if (playerTeamArrayList.get(i).getQuests().get(j).getQuestName().compareToIgnoreCase(event.getEntity().getName()) == 0){
                             if (!playerTeamArrayList.get(i).isQuestDone(event.getEntity().getName())){
                                 questEntity(playerTeamArrayList.get(i), event.getEntity().getName());
@@ -294,28 +294,14 @@ public class CommonListeners implements Listener {
 
     @EventHandler
     public void onDisconnect(PlayerQuitEvent event){
-        /*final Player player = event.getPlayer();
-        for (int i = 0; i < playerTeamArrayList.size(); i++){
-            if (playerTeamArrayList.get(i).getPlayer() == player){
-                if (playerTeamArrayList.get(i).getTeam().getTeamName().compareToIgnoreCase("impostors") == 0){
-                    ChatUtilities.broadcast("Le joueur " + player.getName() + " était un impostor");
-                    impostors.removePlayer(playerTeamArrayList.get(i));
-                }else if (playerTeamArrayList.get(i).getTeam().getTeamName().compareToIgnoreCase("crewmates") == 0){
-                    ChatUtilities.broadcast("Le joueur " + player.getName() + " était un crewmate");
-                    crewmates.removePlayer(playerTeamArrayList.get(i));
-                }
-            }
-        }*/
+
 
     }
 
 
 
 
-    public void questEntity(PlayerTeam player, String nameEntity) throws Exception {
-
-
-
+    public void questEntity(PlayerTeam player, String nameEntity){
 
         if (player.getPlayer().getScoreboard().getObjective("Quest").getScore(nameEntity).getScore() > 1){ //Si le score du joueur est supérieur à 1
             //On lui décrémente son nombre d'entité à tuer
@@ -333,26 +319,7 @@ public class CommonListeners implements Listener {
 
     @EventHandler
     public void onPlayerEarnExp(PlayerExpChangeEvent event){
-        /*if (hasStarted){
-            final Player player = event.getPlayer();
 
-            for (int i = 0; i < playerTeamArrayList.size(); i++) {
-                if (playerTeamArrayList.get(i).getPlayer() == player) {
-                    if (playerTeamArrayList.get(i).getTeam().getTeamName().compareToIgnoreCase("Crewmates") == 0) {
-                        if (crewmates.allPlayerQuestDone()){
-
-                            final Quest finalQuest = Quest.pickFinalQuest();
-                            for (int j = 0; j < playerTeamArrayList.size(); j++){
-                                playerTeamArrayList.get(j).addQuest(finalQuest);
-                            }
-                            crewmates.sendMessage("Dernière quête !","Il vous reste une dernière quête pour gagner la partie !");
-                            impostors.sendMessage("Dernière quête !","Empêchez les crewmates d'accomplir la dernière quête !");
-                        }
-                    }
-                }
-            }
-
-        }*/
     }
 
 

@@ -21,7 +21,7 @@ public class StartCommand implements CommandExecutor {
 
     private MeetingCommand meetingData;
     private int nbQuest = 3;
-    private int timerborder = 60;
+    private int timerborder;
     private CommonListeners commonListeners = new CommonListeners();
     private ImpostorTeam impostors = new ImpostorTeam("Impostors", new ArrayList<>());
     private CrewmateTeam crewmates = new CrewmateTeam("Crewmates", new ArrayList<>());
@@ -77,7 +77,7 @@ public class StartCommand implements CommandExecutor {
             }
             if (!gameStarted){
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule logAdminCommands false");
-
+                timerborder = 600;
                 impostors.emptyTeam();
                 crewmates.emptyTeam();
                 playerTeamArrayList.clear();
@@ -146,7 +146,10 @@ public class StartCommand implements CommandExecutor {
 
                             ChatUtilities.title("Border","La bordure est retirée et le pvp activé");
                             Bukkit.getWorld("world").setPVP(true);
-                            wb.reset();
+
+                            wb.setCenter(0,0);
+                            wb.setSize(1000,1000);
+
                             scheduler.cancelTasks(AmongLegendMinecraft.plugin);
 
                         }

@@ -43,7 +43,6 @@ public class Quest {
         this.done = done;
         this.compteur = compteur;
         this.questType = questType;
-        this.material = material;
         this.key = key;
     }
 
@@ -124,7 +123,7 @@ public class Quest {
         tempCollect.add(new Quest("Nether Wart","Obtenir un stack de verrues du nether",false,64,"collect",Material.NETHER_WART));
         tempCollect.add(new Quest("FireWork Rocket","Obtenir un stack de feu d'artifices",false,64,"collect",Material.FIREWORK_ROCKET));
         tempCollect.add(new Quest("Leather","Obtenir 32 Cuir",false,32,"collect",Material.LEATHER));
-        tempCollect.add(new Quest("Heart of the Sea","Trouver un coeur de la mer dans un coffre au trésor",false,1,"collect",Material.HEART_OF_THE_SEA));
+        //tempCollect.add(new Quest("Heart of the Sea","Trouver un coeur de la mer dans un coffre au trésor",false,1,"collect",Material.HEART_OF_THE_SEA));
         tempCollect.add(new Quest("Quartz","Récolter un stack de Quartz",false,64,"collect",Material.QUARTZ));
         tempCollect.add(new Quest("Diamond","Recolter 15 diamants",false,15,"collect",Material.DIAMOND));
         tempCollect.add(new Quest("Book","Obtenir 20 Livres",false,15,"collect",Material.BOOK));
@@ -153,16 +152,16 @@ public class Quest {
 
         //Advancements type :
         tempAdvancement.add(new Quest("Sticky Situation", "Arreter sa chute avec un bloc de miel",false,1,"advancements","adventure/honey_block_slide"));
-        tempAdvancement.add(new Quest("Zombie Doctor","Soigner un zombie villageois à l'aide d'une potion de weakness et d'une pomme dorée",false,1,"advancements","story/cure_zombie_villager"));
+        //tempAdvancement.add(new Quest("Zombie Doctor","Soigner un zombie villageois à l'aide d'une potion de weakness et d'une pomme dorée",false,1,"advancements","story/cure_zombie_villager"));
         tempAdvancement.add(new Quest("Cover me with diamonds","Avoir n'importe quel morceau d'armure en diamant equipé",false,1,"advancements","story/shiny_gear"));
         tempAdvancement.add(new Quest("Return to Sender","Tuer un ghast en lui renvoyant sa boule de feu",false,1,"advancements","nether/return_to_sender"));
         tempAdvancement.add(new Quest("A Terrible Fortress","Trouver une forteresse dans le nether",false,1,"advancements","nether/find_fortress"));
-        tempAdvancement.add(new Quest("Not Quite Nine Lives","Charger une respawn anchor au maximum",false,1,"advancements","nether/charge_respawn_anchor"));
-        tempAdvancement.add(new Quest("Is it a Balloon ?","Regarder un ghast à travers une longue-vue",false,1,"advancements","adventure/spyglass_at_ghast"));
-        tempAdvancement.add(new Quest("Caves & cliffs","Tomber d'au moins y=319 jusqu'à au moins y=-59 pour une distance vertical d'au moins 379 blocs",false,1,"advancements", "adventure/fall_from_world_height"));
+       // tempAdvancement.add(new Quest("Not Quite Nine Lives","Charger une respawn anchor au maximum",false,1,"advancements","nether/charge_respawn_anchor"));
+        //tempAdvancement.add(new Quest("Is it a Balloon ?","Regarder un ghast à travers une longue-vue",false,1,"advancements","adventure/spyglass_at_ghast"));
+        //tempAdvancement.add(new Quest("Caves & cliffs","Tomber d'au moins y=319 jusqu'à au moins y=-59 pour une distance vertical d'au moins 379 blocs",false,1,"advancements", "adventure/fall_from_world_height"));
         tempAdvancement.add(new Quest("Hired Help","Invoquer un Iron golem",false,1,"advancements","adventure/summon_iron_golem"));
-        tempAdvancement.add(new Quest("Sniper Duel","Tuer un squelette de plus de 50 mètres de distance",false,1,"advancements", "adventure/sniper_duel"));
-        tempAdvancement.add(new Quest("Bullseye","Toucher le centre d'un Target Block d'au moins 30 mètres de distance",false,1,"advancements","adventure/bullseye"));
+        //tempAdvancement.add(new Quest("Sniper Duel","Tuer un squelette de plus de 50 mètres de distance",false,1,"advancements", "adventure/sniper_duel"));
+        //tempAdvancement.add(new Quest("Bullseye","Toucher le centre d'un Target Block d'au moins 30 mètres de distance",false,1,"advancements","adventure/bullseye"));
         tempAdvancement.add(new Quest("Tactical Fishing","Attraper un poisson avec un sceau",false,1,"advancements","husbandry/tactical_fishing"));
 
         Collections.shuffle(tempCollect);

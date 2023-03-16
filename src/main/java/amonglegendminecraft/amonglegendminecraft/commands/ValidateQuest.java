@@ -7,6 +7,7 @@ import amonglegendminecraft.amonglegendminecraft.utils.ChatUtilities;
 import amonglegendminecraft.amonglegendminecraft.utils.SwordUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.WorldBorder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -141,10 +142,12 @@ public class ValidateQuest implements CommandExecutor {
                         }
                         gameData.getCrewmates().sendMessage("Dernière quête !","Il vous reste une dernière quête pour gagner la partie !");
                         gameData.getImpostors().sendMessage("Dernière quête !","Empêchez les crewmates d'accomplir la dernière quête !");
-                        this.lastrun = true;
+                        lastrun = true;
                     }
 
                     if (lastrun){
+                        WorldBorder wb = Bukkit.getWorld("world").getWorldBorder();
+                        wb.reset();
                         for (int i = 0; i < gameData.getCrewmates().getPlayerArrayList().size(); i++){
                             if (gameData.getCrewmates().getPlayerArrayList().get(i).isQuestDone(finalQuest.getQuestName())){
                                 ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
@@ -159,6 +162,9 @@ public class ValidateQuest implements CommandExecutor {
                             }
                         }
                     }
+
+                    playerValidate = null;
+                    senderValidate = false;
 
 
                 }else{
@@ -205,8 +211,6 @@ public class ValidateQuest implements CommandExecutor {
                     }
 
                 }
-                playerValidate = null;
-                senderValidate = false;
 
                 if (gameData.getCrewmates().allPlayerQuestDone()){
 
@@ -220,6 +224,8 @@ public class ValidateQuest implements CommandExecutor {
                 }
 
                 if (lastrun){
+                    WorldBorder wb = Bukkit.getWorld("world").getWorldBorder();
+                    wb.reset();
                     for (int i = 0; i < gameData.getCrewmates().getPlayerArrayList().size(); i++){
                         if (gameData.getCrewmates().getPlayerArrayList().get(i).isQuestDone(finalQuest.getQuestName())){
                             ArrayList<Player> playersArray = new ArrayList<Player>(Bukkit.getOnlinePlayers());  //On créer un arraylist de tout les joueurs connecté
@@ -234,6 +240,8 @@ public class ValidateQuest implements CommandExecutor {
                         }
                     }
                 }
+                playerValidate = null;
+                senderValidate = false;
             }
 
         }
